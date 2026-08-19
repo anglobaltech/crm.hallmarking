@@ -10,16 +10,13 @@ export default function Intake({ setPage }) {
 
   const [articles, setArticles] = useState([]);
 
-  const [articleType, setArticleType] = useState('');
-  const [metal, setMetal] = useState('');
-  const [purity, setPurity] = useState('');
+  const [articleType, setArticleType] = useState('Ring');
+  const [metal, setMetal] = useState('Gold');
+  const [purity, setPurity] = useState('916 (22K)');
   const [declaredWt, setDeclaredWt] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [priority, setPriority] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [priority, setPriority] = useState('Normal');
   const [remarks, setRemarks] = useState('');
-  const [dateOfReceipt, setDateOfReceipt] = useState('');
-  const [otherArticleType, setOtherArticleType] = useState('');
-  const [weightUnit, setWeightUnit] = useState('g');
 
   const addArticle = () => {
     if (!declaredWt) {
@@ -27,25 +24,22 @@ export default function Intake({ setPage }) {
     }
     
     setArticles([...articles, {
-      type: articleType === 'Other' ? (otherArticleType || 'Other') : articleType,
+      type: articleType,
       metal: metal,
       purity: purity,
       gross_weight: parseFloat(declaredWt),
-      weight_unit: weightUnit,
       quantity: parseInt(quantity),
       priority: priority,
       remarks: remarks
     }]);
 
-    setArticleType('');
-    setMetal('');
-    setPurity('');
+    setArticleType('Ring');
+    setMetal('Gold');
+    setPurity('916 (22K)');
     setDeclaredWt('');
-    setQuantity('');
-    setPriority('');
+    setQuantity(1);
+    setPriority('Normal');
     setRemarks('');
-    setOtherArticleType('');
-    setWeightUnit('g');
   };
 
   const removeArticle = (index) => {
@@ -54,21 +48,10 @@ export default function Intake({ setPage }) {
 
   const editArticle = (index) => {
     const art = articles[index];
-    
-    // Check if type is in standard list, if not it's "Other"
-    const standardTypes = ['Ring', 'Necklace', 'Bangle', 'Earrings', 'Bracelet', 'Pendant', 'Chain', 'Anklet'];
-    if (standardTypes.includes(art.type)) {
-      setArticleType(art.type);
-      setOtherArticleType('');
-    } else {
-      setArticleType('Other');
-      setOtherArticleType(art.type);
-    }
-    
+    setArticleType(art.type);
     setMetal(art.metal);
     setPurity(art.purity);
     setDeclaredWt(art.gross_weight.toString());
-    setWeightUnit(art.weight_unit || 'g');
     setQuantity(art.quantity);
     setPriority(art.priority);
     setRemarks(art.remarks || '');
@@ -80,11 +63,10 @@ export default function Intake({ setPage }) {
     
     if (declaredWt) {
       articlesToSave.push({
-        type: articleType === 'Other' ? (otherArticleType || 'Other') : articleType,
+        type: articleType,
         metal: metal,
         purity: purity,
         gross_weight: parseFloat(declaredWt),
-        weight_unit: weightUnit,
         quantity: parseInt(quantity),
         priority: priority,
         remarks: remarks
@@ -114,17 +96,14 @@ export default function Intake({ setPage }) {
       setHmcName('');
       setLicenseNo('');
       setCustMobile('');
-      setDateOfReceipt('');
       setArticles([]);
-      setArticleType('');
-      setMetal('');
-      setPurity('');
+      setArticleType('Ring');
+      setMetal('Gold');
+      setPurity('916 (22K)');
       setDeclaredWt('');
-      setQuantity('');
-      setPriority('');
+      setQuantity(1);
+      setPriority('Normal');
       setRemarks('');
-      setOtherArticleType('');
-      setWeightUnit('g');
     } catch (err) {
       console.error(err);
       toast('Error saving order: ' + (err.response?.data?.error || err.message), 'error');
@@ -137,8 +116,8 @@ export default function Intake({ setPage }) {
     <div className="page active" id="p-intake">
       <div className="page-title"><i className="ti ti-circle-plus"></i> Article Intake</div>
       <div className="card">
-
         <div className="card-title" style={{ marginBottom: '14px' }}>Jeweller Shop Details</div>
+        
         <div className="form-grid">
           <div className="form-group">
             <label>Jeweller Shop Name *</label>
@@ -150,17 +129,11 @@ export default function Intake({ setPage }) {
           </div>
           <div className="form-group">
             <label>Mobile Number</label>
-            <div style={{ display: 'flex' }}>
-              <div style={{ padding: '8px 12px', background: '#F8F7F4', border: '1px solid var(--border)', borderRight: 'none', borderRadius: '4px 0 0 4px', color: '#666', display: 'flex', alignItems: 'center', fontSize: '13px' }}>+91</div>
-              <input type="tel" value={custMobile} onChange={e => {
-                const val = e.target.value.replace(/\D/g, '');
-                if (val.length <= 10) setCustMobile(val);
-              }} style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} placeholder="10-digit mobile" />
-            </div>
+            <input type="tel" placeholder="10-digit mobile" value={custMobile} onChange={e => setCustMobile(e.target.value)} />
           </div>
           <div className="form-group">
             <label>Date of Receipt</label>
-            <input type="date" value={dateOfReceipt} onChange={e => setDateOfReceipt(e.target.value)} />
+            <input type="date" defaultValue={new Date().toISOString().split('T')[0]} />
           </div>
         </div>
         
@@ -187,7 +160,7 @@ export default function Intake({ setPage }) {
                     <td style={{ padding: '8px' }}>{art.type}</td>
                     <td style={{ padding: '8px' }}>{art.metal}</td>
                     <td style={{ padding: '8px' }}>{art.purity}</td>
-                    <td style={{ padding: '8px' }}>{art.gross_weight} {art.weight_unit}</td>
+                    <td style={{ padding: '8px' }}>{art.gross_weight}</td>
                     <td style={{ padding: '8px' }}>{art.quantity}</td>
                     <td style={{ padding: '8px' }}>{art.priority}</td>
                     <td style={{ padding: '8px' }}>
@@ -211,22 +184,14 @@ export default function Intake({ setPage }) {
           <div className="form-group">
             <label>Article Type *</label>
             <select value={articleType} onChange={e => setArticleType(e.target.value)}>
-              <option value="">Select Type</option>
               <option>Ring</option><option>Necklace</option>
               <option>Bangle</option><option>Earrings</option><option>Bracelet</option>
               <option>Pendant</option><option>Chain</option><option>Anklet</option><option>Other</option>
             </select>
           </div>
-          {articleType === 'Other' && (
-            <div className="form-group">
-              <label>Article Name *</label>
-              <input type="text" placeholder="Enter article name" value={otherArticleType} onChange={e => setOtherArticleType(e.target.value)} />
-            </div>
-          )}
           <div className="form-group">
             <label>Metal *</label>
             <select value={metal} onChange={e => setMetal(e.target.value)}>
-              <option value="">Select Metal</option>
               <option>Gold</option>
               <option>Silver</option>
             </select>
@@ -234,39 +199,18 @@ export default function Intake({ setPage }) {
           <div className="form-group">
             <label>Declared Purity</label>
             <select value={purity} onChange={e => setPurity(e.target.value)}>
-              <option value="">Select Purity</option>
-              {metal === 'Silver' ? (
-                <>
-                  <option>999 (Fine Silver)</option>
-                  <option>958 (Britannia Silver)</option>
-                  <option>925 (Sterling Silver)</option>
-                  <option>900 (Coin Silver)</option>
-                  <option>800 (800 Silver)</option>
-                </>
-              ) : (
-                <>
-                  <option>999 (24K)</option>
-                  <option>916 (22K)</option>
-                  <option>833 (20K)</option>
-                  <option>750 (18K)</option>
-                  <option>666 (16K)</option>
-                  <option>585 (14K)</option>
-                  <option>417 (10K)</option>
-                  <option>375 (9K)</option>
-                </>
-              )}
+              <option>999 (24K)</option>
+              <option>916 (22K)</option>
+              <option>833 (20K)</option>
+              <option>750 (18K)</option>
+              <option>666 (16K)</option>
+              <option>585 (14K)</option>
+              <option>375 (9K)</option>
             </select>
           </div>
           <div className="form-group">
-            <label>Weight Declared by customer *</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input type="number" placeholder="0.000" step="0.001" value={declaredWt} onChange={e => setDeclaredWt(e.target.value)} style={{ flex: 1 }} />
-              <select value={weightUnit} onChange={e => setWeightUnit(e.target.value)} style={{ width: '80px' }}>
-                <option value="mg">mg</option>
-                <option value="g">g</option>
-                <option value="kg">kg</option>
-              </select>
-            </div>
+            <label>Weight Declared by customer (g) *</label>
+            <input type="number" placeholder="0.000" step="0.001" value={declaredWt} onChange={e => setDeclaredWt(e.target.value)} />
           </div>
           <div className="form-group">
             <label>Quantity</label>
@@ -275,7 +219,6 @@ export default function Intake({ setPage }) {
           <div className="form-group">
             <label>Priority</label>
             <select value={priority} onChange={e => setPriority(e.target.value)}>
-              <option value="">Select Priority</option>
               <option>Normal</option>
               <option>Urgent</option>
               <option>Express</option>
@@ -298,6 +241,12 @@ export default function Intake({ setPage }) {
         <div className="btn-row">
           <button className="btn btn-gold" onClick={() => saveOrder(false)} disabled={loading}>
             <i className="ti ti-check"></i> {loading ? 'Saving...' : 'Save'}
+          </button>
+          <button className="btn btn-outline" onClick={() => saveOrder(true)} disabled={loading}>
+            <i className="ti ti-receipt"></i> Receipt
+          </button>
+          <button className="btn btn-outline" onClick={() => { if(setPage) setPage('delivery_vouchers'); }}>
+            <i className="ti ti-file-invoice"></i> Delivery Voucher
           </button>
         </div>
       </div>

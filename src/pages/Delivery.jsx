@@ -3,7 +3,6 @@ import client from '../api/client';
 
 export default function Delivery() {
   const [artId, setArtId] = useState('');
-  const [mobile, setMobile] = useState('');
   const [loading, setLoading] = useState(false);
   const [article, setArticle] = useState(null);
 
@@ -56,16 +55,7 @@ export default function Delivery() {
               <button className="btn btn-outline" onClick={fetchArticle}>Search</button>
             </div>
           </div>
-          <div className="form-group">
-            <label>Customer Mobile</label>
-            <div style={{ display: 'flex' }}>
-              <div style={{ padding: '8px 12px', background: '#F8F7F4', border: '1px solid var(--border)', borderRight: 'none', borderRadius: '4px 0 0 4px', color: '#666', display: 'flex', alignItems: 'center', fontSize: '13px' }}>+91</div>
-              <input type="tel" value={mobile} onChange={e => {
-                const val = e.target.value.replace(/\D/g, '');
-                if (val.length <= 10) setMobile(val);
-              }} style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} placeholder="Verify customer" />
-            </div>
-          </div>
+          <div className="form-group"><label>Customer Mobile</label><input type="tel" placeholder="Verify customer" /></div>
         </div>
         
         {article && (

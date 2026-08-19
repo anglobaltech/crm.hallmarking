@@ -28,12 +28,10 @@ import FireAssay from './pages/FireAssay';
 import GoldExchange from './pages/GoldExchange';
 import ServiceDeliveryVouchers from './pages/ServiceDeliveryVouchers';
 import BillingDashboard from './pages/BillingDashboard';
-import CreateInvoice from './pages/CreateInvoice';
 import Login from './pages/Login';
 
 const deskDefaultPage = {
-  dashboard_nav: 'dashboard',
-  reception: 'intake',
+  reception: 'dashboard',
   quality: 'xrf',
   huid: 'huidentry',
   admin: 'dailyreport',
@@ -46,7 +44,6 @@ export default function App() {
   const [isLocked, setIsLocked] = useState(true);
   const [currentDesk, setCurrentDesk] = useState('reception');
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const [globalEdit, setGlobalEdit] = useState(null);
 
   const handleLogin = (userData) => {
     setUserContext(userData);
@@ -66,29 +63,29 @@ export default function App() {
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'dashboard': return <Dashboard userContext={userContext} setPage={setCurrentPage} globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />;
-      case 'intake': return <Intake setPage={setCurrentPage} userContext={userContext} />;
-      case 'articles': return <Articles setPage={setCurrentPage} userContext={userContext} globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />;
-      case 'delivery': return <Delivery userContext={userContext} />;
-      case 'delivery_vouchers': return <DeliveryVouchers userContext={userContext} />;
-      case 'delivery_voucher': return <DeliveryVoucher userContext={userContext} />;
-      case 'discount': return <BillingDashboard userContext={userContext} />;
-      case 'xrf': return <Xrf userContext={userContext} setPage={setCurrentPage} globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />;
-      case 'weightcheck': return <WeightCheck userContext={userContext} />;
-      case 'imageauto': return <ImageAuto userContext={userContext} />;
-      case 'huidentry': return <HuidEntry userContext={userContext} />;
-      case 'huidregister': return <HuidRegister userContext={userContext} />;
-      case 'portal-links': return <PortalLinks userContext={userContext} />;
-      case 'dailyreport': return <DailyReport userContext={userContext} />;
-      case 'reminders': return <Reminders userContext={userContext} setUserContext={setUserContext} />;
-      case 'services': return <Services userContext={userContext} />;
-      case 'settings': return <Settings userContext={userContext} setUserContext={setUserContext} />;
-      case 'lasercutting': return <LaserCutting setPage={setCurrentPage} userContext={userContext} globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />;
-      case 'soldering': return <Soldering setPage={setCurrentPage} userContext={userContext} globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />;
-      case 'fireassay': return <FireAssay setPage={setCurrentPage} userContext={userContext} globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />;
-      case 'goldexchange': return <GoldExchange setPage={setCurrentPage} userContext={userContext} globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />;
-      case 'service_vouchers': return <ServiceDeliveryVouchers userContext={userContext} />;
-      case 'billing': return <BillingDashboard userContext={userContext} />;
+      case 'dashboard': return <Dashboard />;
+      case 'intake': return <Intake setPage={setCurrentPage} />;
+      case 'articles': return <Articles setPage={setCurrentPage} />;
+      case 'delivery': return <Delivery />;
+      case 'delivery_vouchers': return <DeliveryVouchers />;
+      case 'delivery_voucher': return <DeliveryVoucher />;
+      case 'discount': return <BillingDashboard />; // Replaced old Discount with new Billing Dashboard
+      case 'xrf': return <Xrf />;
+      case 'weightcheck': return <WeightCheck />;
+      case 'imageauto': return <ImageAuto />;
+      case 'huidentry': return <HuidEntry />;
+      case 'huidregister': return <HuidRegister />;
+      case 'portal-links': return <PortalLinks />;
+      case 'dailyreport': return <DailyReport />;
+      case 'reminders': return <Reminders />;
+      case 'services': return <Services />;
+      case 'settings': return <Settings />;
+      case 'lasercutting': return <LaserCutting setPage={setCurrentPage} />;
+      case 'soldering': return <Soldering setPage={setCurrentPage} />;
+      case 'fireassay': return <FireAssay setPage={setCurrentPage} />;
+      case 'goldexchange': return <GoldExchange setPage={setCurrentPage} />;
+      case 'service_vouchers': return <ServiceDeliveryVouchers />;
+      case 'billing': return <BillingDashboard />;
       default: return <div>Page {currentPage} not implemented yet.</div>;
     }
   };

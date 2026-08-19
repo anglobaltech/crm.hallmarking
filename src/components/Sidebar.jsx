@@ -1,59 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import client from '../api/client';
+import React from 'react';
 
 export default function Sidebar({ currentDesk, currentPage, setPage }) {
-  const [reminderCount, setReminderCount] = useState(0);
-
-  useEffect(() => {
-    // Only fetch if admin desk is open or globally if preferred, we can fetch once
-    const fetchRemindersCount = async () => {
-      try {
-        const res = await client.get('/workflow/reminders');
-        const reminders = res.data?.reminders || [];
-        
-        // Count urgent reminders (due in <= 3 days and not completed)
-        let count = 0;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        reminders.forEach(r => {
-          if (r.status !== 'Completed') {
-            const due = new Date(r.due_date);
-            const diff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
-            if (diff <= 3) count++;
-          }
-        });
-        
-        setReminderCount(count);
-      } catch (err) {
-        console.error('Failed to fetch reminders for sidebar:', err);
-      }
-    };
-    
-    fetchRemindersCount();
-    // Set up a simple poll every 5 minutes to keep it updated
-    const interval = setInterval(fetchRemindersCount, 300000);
-    return () => clearInterval(interval);
-  }, []);
-
   const sections = {
-    dashboard_nav: [
-      { id: 'dashboard', icon: 'ti-layout-dashboard', label: 'Dashboard' }
-    ],
     reception: [
       { id: 'dashboard', icon: 'ti-layout-dashboard', label: 'Dashboard' },
       { id: 'intake', icon: 'ti-circle-plus', label: 'Article Intake' },
-      { id: 'articles', icon: 'ti-list-details', label: 'Article Register' },
+      { id: 'articles', icon: 'ti-list-details', label: 'Article Register', badge: { text: '248', color: 'gold' } },
       { id: 'delivery_vouchers', icon: 'ti-file-invoice', label: 'Delivery Vouchers' },
+      { id: 'delivery', icon: 'ti-package-export', label: 'Delivery / Return' },
       { id: 'discount', icon: 'ti-percent', label: 'Discount & Billing' },
     ],
     quality: [
-      { id: 'xrf', icon: 'ti-atom', label: 'XRF Testing' }
+      { id: 'xrf', icon: 'ti-atom', label: 'XRF Testing' },
+      { id: 'weightcheck', icon: 'ti-scale', label: 'Weight Automation' },
+      { id: 'imageauto', icon: 'ti-camera', label: 'Image Automation' },
+      { id: 'qcreport', icon: 'ti-file-check', label: 'QC Report' },
+    ],
+    huid: [
+      { id: 'huidentry', icon: 'ti-barcode', label: 'HUID Entry', badge: { text: '14' } },
+      { id: 'huidregister', icon: 'ti-database', label: 'HUID Register' },
+      { id: 'portal-links', icon: 'ti-external-link', label: 'Portal Access' },
     ],
     admin: [
       { id: 'dailyreport', icon: 'ti-report', label: 'Daily Report' },
       { id: 'billing', icon: 'ti-receipt', label: 'Billing & Invoices' },
-      { id: 'reminders', icon: 'ti-bell', label: 'Reminders', badge: reminderCount > 0 ? { text: reminderCount.toString(), color: 'badge-red' } : null },
+      { id: 'reminders', icon: 'ti-bell', label: 'Reminders', badge: { text: '3' } },
+      { id: 'services', icon: 'ti-briefcase', label: 'Our Services' },
       { id: 'settings', icon: 'ti-adjustments', label: 'Settings' },
     ],
     extra_services: [
@@ -66,9 +38,9 @@ export default function Sidebar({ currentDesk, currentPage, setPage }) {
   };
 
   const labels = {
-    dashboard_nav: 'Dashboard',
     reception: 'Reception',
     quality: 'Quality / XRF',
+    huid: 'HUID Desk',
     admin: 'Admin',
     extra_services: 'Services'
   };

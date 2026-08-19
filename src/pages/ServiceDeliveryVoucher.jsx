@@ -1,7 +1,6 @@
 import React from 'react';
-import { getImageUrl } from '../api/client';
 
-export default function ServiceDeliveryVoucher({ job, onBack, userContext }) {
+export default function ServiceDeliveryVoucher({ job, onBack }) {
   const customerName = job?.jeweller_name || 'N/A';
   const customerMobile = job?.phone || 'N/A';
   const address = job?.address || 'N/A';
@@ -16,10 +15,6 @@ export default function ServiceDeliveryVoucher({ job, onBack, userContext }) {
     window.print();
   };
 
-  const centreName = userContext?.tenant_name || 'Hallmarking Centre';
-  const centreLicence = userContext?.bis_licence || 'N/A';
-  const centreAddress = userContext?.tenant_address || 'Address not provided';
-
   return (
     <div className="page active" id="p-service-delivery-voucher">
       <div className="page-title">
@@ -33,17 +28,9 @@ export default function ServiceDeliveryVoucher({ job, onBack, userContext }) {
       <div className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>
         
         {/* Header Section */}
-        <div style={{ textAlign: 'center', marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {userContext?.logo_url && (
-            <img src={getImageUrl(userContext.logo_url)} alt="Centre Logo" style={{ maxWidth: '300px', height: '80px', objectFit: 'contain', marginBottom: '15px' }} />
-          )}
-          <h2 style={{ margin: '0 0 5px 0', color: 'var(--gold)', fontSize: '28px' }}>{centreName}</h2>
-          <p style={{ margin: '0 0 5px 0', color: 'var(--text2)', fontSize: '14px' }}>{centreAddress}</p>
-          <p style={{ margin: '0 0 15px 0', color: 'var(--text2)', fontWeight: 'bold' }}>BIS Licence: {centreLicence}</p>
-          
-          <div style={{ padding: '8px', background: 'var(--bg-app)', border: '1px solid var(--border)', borderRadius: '4px', display: 'inline-block', minWidth: '300px' }}>
-            <h3 style={{ margin: 0, fontSize: '18px' }}>{job?.serviceName || 'Service'} - Delivery Voucher</h3>
-          </div>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <h2 style={{ margin: '0 0 5px 0' }}>{customerName}</h2>
+          <p style={{ margin: '0', color: 'var(--text2)' }}>{job?.serviceName} - Delivery Voucher</p>
         </div>
         <div className="divider"></div>
 

@@ -22,7 +22,6 @@ export default function CreateInvoice({ onBack }) {
   ]);
 
   const [paymentStatus, setPaymentStatus] = useState('Paid');
-  const [amountPaid, setAmountPaid] = useState('');
   
   // Additional Features state
   const [imageUrl, setImageUrl] = useState('');
@@ -98,9 +97,7 @@ export default function CreateInvoice({ onBack }) {
     
     // Recalculate row
     const item = newItems[index];
-    const qty = parseFloat(item.quantity) || 0;
-    const price = parseFloat(item.price_per_unit) || 0;
-    const baseTotal = qty * price;
+    const baseTotal = item.quantity * item.price_per_unit;
     
     let rowDiscAmt = parseFloat(item.discount_amt) || 0;
     if (field === 'discount_pct' && value > 0) {
@@ -187,7 +184,7 @@ export default function CreateInvoice({ onBack }) {
         image_url: imageUrl,
         description: description,
         linked_payment: 'Cash', // default since removed
-        payment_amount: parseFloat(amountPaid) || 0,
+        payment_amount: 0,
         items: items
       };
 
@@ -237,6 +234,9 @@ export default function CreateInvoice({ onBack }) {
             >Paid</div>
           </div>
         </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="btn btn-outline"><i className="ti ti-settings"></i></button>
+        </div>
       </div>
 
       <div style={{ padding: '20px' }}>
@@ -245,28 +245,25 @@ export default function CreateInvoice({ onBack }) {
           {/* Left Side: Customer */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', gap: '16px' }}>
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-group" style={{ flex: 2 }}>
                 <label style={{ color: 'var(--red)' }}>Customer *</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter customer name..." 
-                  value={customerName} 
-                  onChange={e => setCustomerName(e.target.value)} 
-                  style={{ width: '100%' }}
-                />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <select value={customerId} onChange={handleCustomerSelect} style={{ flex: 1 }}>
+                    <option value="">-- Select Customer --</option>
+                    {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                  <input 
+                    type="text" 
+                    placeholder="Or type name..." 
+                    value={customerName} 
+                    onChange={e => { setCustomerName(e.target.value); setCustomerId(''); }} 
+                    style={{ flex: 1 }}
+                  />
+                </div>
               </div>
               <div className="form-group" style={{ flex: 1 }}>
                 <label>Phone No.</label>
-                <div style={{ display: 'flex' }}>
-                  <span style={{ padding: '8px 12px', background: '#F8F9FA', border: '1px solid var(--border)', borderRight: 'none', borderRadius: '4px 0 0 4px', color: '#666', height: '40px', display: 'flex', alignItems: 'center' }}>+91</span>
-                  <input 
-                    type="text" 
-                    value={customerPhone} 
-                    onChange={e => setCustomerPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} 
-                    placeholder="10-digit number"
-                    style={{ flex: 1, borderRadius: '0 4px 4px 0' }}
-                  />
-                </div>
+                <input type="text" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} />
               </div>
             </div>
             
@@ -294,67 +291,27 @@ export default function CreateInvoice({ onBack }) {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <label style={{ color: '#666', fontWeight: 500 }}>State of supply</label>
-              <input 
-                list="states-list"
-                value={stateOfSupply} 
-                onChange={e => setStateOfSupply(e.target.value)} 
-                placeholder="Select or Type..."
-                style={{ width: '140px', background: '#F8F9FA', border: 'none', borderBottom: '1px solid var(--border)', borderRadius: 0, textAlign: 'right', outline: 'none' }} 
-              />
-              <datalist id="states-list">
-                <option value="Andhra Pradesh" />
-                <option value="Arunachal Pradesh" />
-                <option value="Assam" />
-                <option value="Bihar" />
-                <option value="Chhattisgarh" />
-                <option value="Goa" />
-                <option value="Gujarat" />
-                <option value="Haryana" />
-                <option value="Himachal Pradesh" />
-                <option value="Jharkhand" />
-                <option value="Karnataka" />
-                <option value="Kerala" />
-                <option value="Madhya Pradesh" />
-                <option value="Maharashtra" />
-                <option value="Manipur" />
-                <option value="Meghalaya" />
-                <option value="Mizoram" />
-                <option value="Nagaland" />
-                <option value="Odisha" />
-                <option value="Punjab" />
-                <option value="Rajasthan" />
-                <option value="Sikkim" />
-                <option value="Tamil Nadu" />
-                <option value="Telangana" />
-                <option value="Tripura" />
-                <option value="Uttar Pradesh" />
-                <option value="Uttarakhand" />
-                <option value="West Bengal" />
-                <option value="Andaman and Nicobar Islands" />
-                <option value="Chandigarh" />
-                <option value="Dadra and Nagar Haveli and Daman and Diu" />
-                <option value="Delhi" />
-                <option value="Jammu and Kashmir" />
-                <option value="Ladakh" />
-                <option value="Lakshadweep" />
-                <option value="Puducherry" />
-              </datalist>
+              <select value={stateOfSupply} onChange={e => setStateOfSupply(e.target.value)} style={{ width: '140px', background: '#F8F9FA', border: 'none', borderBottom: '1px solid var(--border)', borderRadius: 0, textAlign: 'right' }}>
+                <option value="Delhi">Delhi</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Gujarat">Gujarat</option>
+              </select>
             </div>
           </div>
         </div>
 
         {/* Dynamic Table */}
         <div style={{ overflowX: 'auto', marginBottom: '20px', border: '1px solid var(--border)', borderRadius: '6px' }}>
-          <table style={{ minWidth: '1200px', margin: 0 }}>
+          <table style={{ minWidth: '1000px', margin: 0 }}>
             <thead>
               <tr style={{ background: '#F1F3F5' }}>
                 <th style={{ width: '40px', textAlign: 'center' }}>#</th>
-                <th style={{ width: '300px' }}>ITEM</th>
-                <th style={{ width: '100px' }}>QTY</th>
+                <th style={{ width: '250px' }}>ITEM</th>
+                <th style={{ width: '80px' }}>QTY</th>
                 <th style={{ width: '100px' }}>UNIT</th>
-                <th style={{ width: '150px' }}>PRICE/UNIT<br/><small style={{fontWeight: 'normal', color:'#888'}}>Without Tax</small></th>
-                <th style={{ width: '200px', textAlign: 'center' }}>DISCOUNT<br/><span style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'normal', color:'#888', fontSize: '10px'}}><span style={{flex:1}}>%</span><span style={{flex:1}}>AMOUNT</span></span></th>
-                <th style={{ width: '200px', textAlign: 'center' }}>TAX<br/><span style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'normal', color:'#888', fontSize: '10px'}}><span style={{flex:1}}></span><span style={{flex:1}}>AMOUNT</span></span></th>
+                <th style={{ width: '120px' }}>PRICE/UNIT<br/><small style={{fontWeight: 'normal', color:'#888'}}>Without Tax</small></th>
+                <th style={{ width: '160px', textAlign: 'center' }}>DISCOUNT<br/><span style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'normal', color:'#888', fontSize: '10px'}}><span style={{flex:1}}>%</span><span style={{flex:1}}>AMOUNT</span></span></th>
+                <th style={{ width: '160px', textAlign: 'center' }}>TAX<br/><span style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'normal', color:'#888', fontSize: '10px'}}><span style={{flex:1}}></span><span style={{flex:1}}>AMOUNT</span></span></th>
                 <th style={{ width: '100px', textAlign: 'right' }}>AMOUNT</th>
               </tr>
             </thead>
@@ -368,30 +325,30 @@ export default function CreateInvoice({ onBack }) {
                     </div>
                   </td>
                   <td style={{ padding: '4px' }}>
-                    <input type="text" value={item.item_name} onChange={e => handleItemChange(idx, 'item_name', e.target.value)} style={{ border: '1px solid var(--border)', borderRadius: '4px', padding: '6px 8px', background: '#fff', width: '100%' }} placeholder="Enter item name..." />
+                    <input type="text" value={item.item_name} onChange={e => handleItemChange(idx, 'item_name', e.target.value)} style={{ border: '1px solid transparent', background: '#F8F9FA' }} placeholder="Enter item name..." />
                   </td>
                   <td style={{ padding: '4px' }}>
-                    <input type="number" value={item.quantity} onChange={e => handleItemChange(idx, 'quantity', e.target.value)} style={{ border: '1px solid var(--border)', borderRadius: '4px', padding: '6px 8px', background: '#fff', width: '100%' }} placeholder="0" />
+                    <input type="number" value={item.quantity} onChange={e => handleItemChange(idx, 'quantity', parseFloat(e.target.value)||0)} style={{ border: '1px solid transparent', background: '#F8F9FA' }} />
                   </td>
                   <td style={{ padding: '4px' }}>
-                    <select value={item.unit} onChange={e => handleItemChange(idx, 'unit', e.target.value)} style={{ border: '1px solid var(--border)', borderRadius: '4px', padding: '6px 8px', background: '#fff', width: '100%' }}>
+                    <select value={item.unit} onChange={e => handleItemChange(idx, 'unit', e.target.value)} style={{ border: '1px solid transparent', background: '#F8F9FA' }}>
                       <option value="NONE">NONE</option>
                       <option value="PCS">PCS</option>
                       <option value="GM">GM</option>
                     </select>
                   </td>
                   <td style={{ padding: '4px' }}>
-                    <input type="number" value={item.price_per_unit} onChange={e => handleItemChange(idx, 'price_per_unit', e.target.value)} style={{ border: '1px solid var(--border)', borderRadius: '4px', padding: '6px 8px', background: '#fff', width: '100%' }} placeholder="0" />
+                    <input type="number" value={item.price_per_unit} onChange={e => handleItemChange(idx, 'price_per_unit', parseFloat(e.target.value)||0)} style={{ border: '1px solid transparent', background: '#F8F9FA' }} />
                   </td>
                   <td style={{ padding: '4px' }}>
                     <div style={{ display: 'flex', gap: '4px' }}>
-                      <input type="number" value={item.discount_pct} onChange={e => handleItemChange(idx, 'discount_pct', e.target.value)} style={{ width: '50%', border: '1px solid var(--border)', borderRadius: '4px', padding: '6px 8px', background: '#fff' }} placeholder="0" />
-                      <input type="number" value={item.discount_amt} onChange={e => handleItemChange(idx, 'discount_amt', e.target.value)} style={{ width: '50%', border: '1px solid var(--border)', borderRadius: '4px', padding: '6px 8px', background: '#fff' }} placeholder="0" />
+                      <input type="number" value={item.discount_pct} onChange={e => handleItemChange(idx, 'discount_pct', parseFloat(e.target.value)||0)} style={{ width: '50%', border: '1px solid transparent', background: '#F8F9FA' }} />
+                      <input type="number" value={item.discount_amt} onChange={e => handleItemChange(idx, 'discount_amt', parseFloat(e.target.value)||0)} style={{ width: '50%', border: '1px solid transparent', background: '#F8F9FA' }} />
                     </div>
                   </td>
                   <td style={{ padding: '4px' }}>
                     <div style={{ display: 'flex', gap: '4px' }}>
-                      <select value={item.tax_rate} onChange={e => handleItemChange(idx, 'tax_rate', e.target.value)} style={{ width: '60%', border: '1px solid var(--border)', borderRadius: '4px', padding: '6px 8px', background: '#fff', fontSize: '11px' }}>
+                      <select value={item.tax_rate} onChange={e => handleItemChange(idx, 'tax_rate', e.target.value)} style={{ width: '60%', border: '1px solid transparent', background: '#F8F9FA', fontSize: '11px' }}>
                         <option value="NONE">Select</option>
                         <option value="GST@18%">GST@18%</option>
                         <option value="GST@3%">GST@3%</option>
@@ -491,26 +448,6 @@ export default function CreateInvoice({ onBack }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px dashed var(--border)', paddingTop: '12px', fontSize: '18px', fontWeight: 700 }}>
               <span>Total</span>
               <span>₹ {totals.grand_total.toFixed(2)}</span>
-            </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', fontSize: '14px' }}>
-              <span style={{ color: '#666', fontWeight: 500 }}>Amount Paid</span>
-              <div style={{ display: 'flex', alignItems: 'center', background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '4px 8px', width: '120px' }}>
-                <span style={{ color: '#888', marginRight: '4px' }}>₹</span>
-                <input 
-                  type="number" 
-                  value={amountPaid} 
-                  onChange={e => setAmountPaid(e.target.value)} 
-                  style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', textAlign: 'right', fontWeight: 600, padding: 0 }} 
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', fontSize: '14px' }}>
-              <span style={{ color: '#666', fontWeight: 500 }}>Amount Pending</span>
-              <span style={{ color: 'var(--red)', fontWeight: 600, fontSize: '16px' }}>
-                ₹ {Math.max(0, totals.grand_total - (parseFloat(amountPaid) || 0)).toFixed(2)}
-              </span>
             </div>
             
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>

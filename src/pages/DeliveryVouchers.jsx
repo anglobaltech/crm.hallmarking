@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import client from '../api/client';
 import DeliveryVoucher from './DeliveryVoucher';
 
-export default function DeliveryVouchers({ userContext }) {
+export default function DeliveryVouchers() {
   const [orders, setOrders] = useState([]);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,6 @@ export default function DeliveryVouchers({ userContext }) {
       <DeliveryVoucher 
         order={selectedOrder} 
         articles={orderArticles} 
-        userContext={userContext}
         onBack={() => setSelectedOrder(null)} 
       />
     );

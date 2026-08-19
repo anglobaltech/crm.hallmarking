@@ -3,7 +3,7 @@ import client from '../api/client';
 import ServiceForm from '../components/ServiceForm';
 import { toast } from '../components/Toast';
 
-export default function FireAssay({ setPage, globalEdit, setGlobalEdit }) {
+export default function FireAssay({ setPage }) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (data) => {
@@ -14,7 +14,7 @@ export default function FireAssay({ setPage, globalEdit, setGlobalEdit }) {
         status: 'Pending',
         result: 'Pending'
       });
-      
+      toast('Fire Assay job saved successfully!', 'success');
     } catch (err) {
       console.error(err);
       toast('Error saving job: ' + (err.response?.data?.error || err.message), 'error');
@@ -26,7 +26,7 @@ export default function FireAssay({ setPage, globalEdit, setGlobalEdit }) {
   return (
     <div className="page active" id="p-fireassay">
       <div className="page-title"><i className="ti ti-test-pipe"></i> Fire Assay</div>
-      <ServiceForm title="Fire Assay" icon="ti-test-pipe" onSubmit={handleSubmit} loading={loading} endpoint="/services/fire" globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />
+      <ServiceForm title="Fire Assay" icon="ti-test-pipe" onSubmit={handleSubmit} loading={loading} endpoint="/services/fire" />
     </div>
   );
 }

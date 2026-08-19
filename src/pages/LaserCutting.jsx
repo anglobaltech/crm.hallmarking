@@ -3,7 +3,7 @@ import client from '../api/client';
 import ServiceForm from '../components/ServiceForm';
 import { toast } from '../components/Toast';
 
-export default function LaserCutting({ setPage, globalEdit, setGlobalEdit }) {
+export default function LaserCutting({ setPage }) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (data) => {
@@ -13,7 +13,7 @@ export default function LaserCutting({ setPage, globalEdit, setGlobalEdit }) {
         ...data,
         status: 'Pending'
       });
-      
+      toast('Laser Cutting job saved successfully!', 'success');
     } catch (err) {
       console.error(err);
       toast('Error saving job: ' + (err.response?.data?.error || err.message), 'error');
@@ -25,7 +25,7 @@ export default function LaserCutting({ setPage, globalEdit, setGlobalEdit }) {
   return (
     <div className="page active" id="p-lasercutting">
       <div className="page-title"><i className="ti ti-cut"></i> Laser Cutting</div>
-      <ServiceForm title="Laser Cutting" icon="ti-cut" onSubmit={handleSubmit} loading={loading} endpoint="/services/laser" globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />
+      <ServiceForm title="Laser Cutting" icon="ti-cut" onSubmit={handleSubmit} loading={loading} endpoint="/services/laser" />
     </div>
   );
 }
