@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import client from '../api/client';
 import ServiceDeliveryVoucher from './ServiceDeliveryVoucher';
 
-export default function ServiceDeliveryVouchers({ userContext }) {
+export default function ServiceDeliveryVouchers() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -17,7 +17,7 @@ export default function ServiceDeliveryVouchers({ userContext }) {
         client.get('/services/exchange'),
         client.get('/services/xrf')
       ]);
-
+      
       const laserJobs = (laserRes.data?.data || []).map(j => ({ ...j, serviceName: 'Laser Cutting' }));
       const solderingJobs = (solderingRes.data?.data || []).map(j => ({ ...j, serviceName: 'Soldering' }));
       const fireJobs = (fireRes.data?.data || []).map(j => ({ ...j, serviceName: 'Fire Assay' }));
@@ -27,7 +27,7 @@ export default function ServiceDeliveryVouchers({ userContext }) {
       let allJobs = [...laserJobs, ...solderingJobs, ...fireJobs, ...exchangeJobs, ...xrfJobs];
       // Sort by newest first
       allJobs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
+      
       setJobs(allJobs);
     } catch (err) {
       console.error('Failed to fetch service delivery vouchers data:', err);
@@ -42,10 +42,9 @@ export default function ServiceDeliveryVouchers({ userContext }) {
 
   if (selectedJob) {
     return (
-      <ServiceDeliveryVoucher
-        job={selectedJob}
-        userContext={userContext}
-        onBack={() => setSelectedJob(null)}
+      <ServiceDeliveryVoucher 
+        job={selectedJob} 
+        onBack={() => setSelectedJob(null)} 
       />
     );
   }
@@ -54,16 +53,16 @@ export default function ServiceDeliveryVouchers({ userContext }) {
     <div className="page active" id="p-service-vouchers-list">
       <div className="page-title">
         <i className="ti ti-file-invoice"></i> Service Delivery Vouchers
-        <button className="btn btn-outline btn-sm" onClick={fetchData} style={{ marginLeft: 'auto' }}>
+        <button className="btn btn-outline btn-sm" onClick={fetchData} style={{marginLeft: 'auto'}}>
           <i className="ti ti-refresh"></i> Refresh
         </button>
       </div>
-
+      
       <div className="search-box">
         <i className="ti ti-search"></i>
         <input type="text" placeholder="Search by Customer Name, Service..." />
       </div>
-
+      
       <div className="card" style={{ padding: 0 }}>
         <div className="tbl-wrap">
           <table>
@@ -93,10 +92,10 @@ export default function ServiceDeliveryVouchers({ userContext }) {
                 </tr>
               ))}
               {jobs.length === 0 && !loading && (
-                <tr><td colSpan="6" style={{ textAlign: 'center' }}>No services found.</td></tr>
+                <tr><td colSpan="6" style={{textAlign: 'center'}}>No services found.</td></tr>
               )}
               {loading && jobs.length === 0 && (
-                <tr><td colSpan="6" style={{ textAlign: 'center' }}>Loading...</td></tr>
+                <tr><td colSpan="6" style={{textAlign: 'center'}}>Loading...</td></tr>
               )}
             </tbody>
           </table>

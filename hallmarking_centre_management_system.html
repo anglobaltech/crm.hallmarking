@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9960C;--gold-light:#FDF3D9;--gold-dark:#8B6A00;
+  --navy:#1A2340;--navy-2:#243050;--navy-3:#2E3D60;
+  --green:#1B7A3E;--green-light:#E8F7EE;
+  --red:#C0392B;--red-light:#FDECEA;
+  --amber:#B7700A;--amber-light:#FFF3DC;
+  --blue:#1565C0;--blue-light:#E3F0FF;
+  --purple:#6A1B9A;--purple-light:#F3E5F5;
+  --text:#1A1A1A;--text2:#555;--text3:#888;
+  --border:#E0DDD6;--bg:#FAFAF8;--card:#FFF;
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+
+/* ── TOP BAR ── */
+#topbar{
+  background:var(--navy);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:52px;position:sticky;top:0;z-index:100;
+}
+#topbar .logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600}
+#topbar .logo-icon{width:32px;height:32px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+#topbar .right{display:flex;align-items:center;gap:12px}
+.lic-badge{background:#FDECEA;color:#C0392B;border:1px solid #e08070;border-radius:20px;padding:3px 12px;font-size:12px;cursor:pointer}
+.lic-badge.ok{background:#E8F7EE;color:#1B7A3E;border-color:#90CBA6}
+.clock{font-size:12px;color:#9AB;letter-spacing:.5px}
+
+/* ── DESK NAV ── */
+#desknav{
+  background:var(--navy-2);display:flex;align-items:center;gap:0;
+  padding:0 16px;overflow-x:auto;border-bottom:2px solid var(--navy-3);
+}
+.desk-tab{
+  display:flex;align-items:center;gap:7px;padding:10px 18px;
+  color:#9AB;font-size:13px;font-weight:500;cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;
+  transition:all .2s;user-select:none;
+}
+.desk-tab:hover{color:#fff;background:rgba(255,255,255,.06)}
+.desk-tab.active{color:#FFD86E;border-bottom-color:#FFD86E;background:rgba(255,255,255,.06)}
+.desk-tab i{font-size:16px}
+.desk-sep{width:1px;height:28px;background:#345;margin:0 4px}
+
+/* ── MAIN LAYOUT ── */
+#main{display:flex;height:calc(100vh - 100px)}
+#sidebar{width:210px;min-width:180px;background:#fff;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+#content{flex:1;overflow-y:auto;padding:20px}
+
+/* ── SIDEBAR ── */
+.sb-section{padding:10px 0}
+.sb-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.8px;padding:6px 16px;text-transform:uppercase}
+.sb-item{
+  display:flex;align-items:center;gap:9px;padding:8px 16px;
+  font-size:13px;color:var(--text2);cursor:pointer;border-left:3px solid transparent;
+  transition:all .15s;
+}
+.sb-item:hover{background:#F5F4F0;color:var(--text)}
+.sb-item.active{background:var(--gold-light);color:var(--gold-dark);border-left-color:var(--gold);font-weight:600}
+.sb-item i{font-size:16px;width:18px;text-align:center}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;border-radius:10px;padding:1px 7px;font-weight:700}
+.sb-badge.gold{background:var(--gold);color:#fff}
+
+/* ── CARDS ── */
+.page{display:none}
+.page.active{display:block}
+.page-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.page-title i{color:var(--gold);font-size:20px}
+.section-title{font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin:20px 0 10px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600;color:var(--text)}
+
+/* ── STAT TILES ── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-tile .lbl{font-size:12px;color:var(--text3);margin-bottom:4px}
+.stat-tile .val{font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.stat-tile .sub{font-size:11px;color:var(--text3);margin-top:4px}
+.stat-tile.gold .val{color:var(--gold-dark)}
+.stat-tile.green .val{color:var(--green)}
+.stat-tile.red .val{color:var(--red)}
+.stat-tile.blue .val{color:var(--blue)}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:12px;font-weight:600;color:var(--text2)}
+input,select,textarea{
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:7px 10px;font-size:13px;color:var(--text);background:#fff;
+  outline:none;transition:border-color .15s;width:100%
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:60px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:var(--gold-dark)}
+.btn-outline{background:#fff;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{background:#F5F4F0}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#145E30}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#96291F}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:#0D47A1}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;text-align:left;background:#F8F7F4;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid #F0EFE8;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAF4}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-gold{background:var(--gold-light);color:var(--gold-dark)}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+
+/* ── PROCESS FLOW ── */
+.flow{display:flex;align-items:center;gap:0;margin-bottom:20px;overflow-x:auto;padding:4px 0}
+.flow-step{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:10px 14px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);min-width:100px;text-align:center;
+  cursor:pointer;transition:all .2s;position:relative;
+}
+.flow-step.done{background:var(--green-light);border-color:#90CBA6}
+.flow-step.active-step{background:var(--gold-light);border-color:var(--gold);font-weight:600}
+.flow-step.pending{opacity:.5}
+.flow-step .num{width:22px;height:22px;border-radius:50%;background:var(--border);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.flow-step.done .num{background:var(--green);color:#fff}
+.flow-step.active-step .num{background:var(--gold);color:#fff}
+.flow-step .lbl{font-size:11px;color:var(--text2)}
+.flow-arrow{font-size:18px;color:var(--border);padding:0 4px;flex-shrink:0}
+
+/* ── ALERT ── */
+.alert{border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.alert-warning{background:var(--amber-light);border:1px solid #E8C07A;color:var(--amber)}
+.alert-danger{background:var(--red-light);border:1px solid #E09080;color:var(--red)}
+.alert-success{background:var(--green-light);border:1px solid #90CBA6;color:var(--green)}
+.alert-info{background:var(--blue-light);border:1px solid #90B4E0;color:var(--blue)}
+.alert i{font-size:16px;flex-shrink:0}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:14px}
+.tl-dot{position:absolute;left:-23px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--gold);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--gold)}
+.tl-dot.green{background:var(--green);box-shadow:0 0 0 1.5px var(--green)}
+.tl-dot.red{background:var(--red);box-shadow:0 0 0 1.5px var(--red)}
+.tl-date{font-size:11px;color:var(--text3);margin-bottom:2px}
+.tl-text{font-size:13px;color:var(--text)}
+
+/* ── IMAGE UPLOAD ── */
+.img-zone{
+  border:2px dashed var(--border);border-radius:var(--radius);
+  padding:24px;text-align:center;cursor:pointer;transition:all .2s;
+  background:#FAFAF8;
+}
+.img-zone:hover{border-color:var(--gold);background:var(--gold-light)}
+.img-zone i{font-size:28px;color:var(--gold);display:block;margin-bottom:8px}
+.img-zone p{font-size:13px;color:var(--text3)}
+.img-preview-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.img-thumb{width:80px;height:80px;border-radius:var(--radius-sm);object-fit:cover;border:1px solid var(--border)}
+
+/* ── MANAK PORTAL LINK ── */
+.portal-tile{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;padding:24px 16px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--card);cursor:pointer;transition:all .2s;text-align:center;
+}
+.portal-tile:hover{border-color:var(--gold);background:var(--gold-light);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.portal-tile i{font-size:28px}
+.portal-tile .p-name{font-size:13px;font-weight:600;color:var(--text)}
+.portal-tile .p-url{font-size:11px;color:var(--gold)}
+
+/* ── REPORT CHART ── */
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{font-size:12px;color:var(--text2);width:80px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:16px;background:#F0EFE8;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .6s}
+.bar-val{font-size:12px;font-weight:600;color:var(--text);width:40px;flex-shrink:0}
+
+/* ── SEARCH BOX ── */
+.search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;margin-bottom:14px}
+.search-box i{color:var(--text3);font-size:16px}
+.search-box input{border:none;padding:8px 4px;flex:1;font-size:13px;outline:none;background:transparent}
+
+/* ── WEIGHT DISPLAY ── */
+.weight-display{
+  background:var(--navy);color:#FFD86E;border-radius:var(--radius);
+  padding:20px;text-align:center;font-family:monospace;margin-bottom:14px;
+}
+.weight-display .w-val{font-size:42px;font-weight:700;line-height:1;letter-spacing:2px}
+.weight-display .w-unit{font-size:14px;color:#9AB;margin-top:4px}
+.weight-display .w-status{font-size:11px;margin-top:8px;color:#7BC}
+
+/* ── RECEIPT ── */
+.receipt{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;font-size:13px}
+.receipt-header{text-align:center;border-bottom:2px dashed var(--border);padding-bottom:14px;margin-bottom:14px}
+.receipt-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #F0EFE8}
+.receipt-row:last-child{border:none;font-weight:700;font-size:14px;padding-top:8px}
+.receipt-logo{font-size:16px;font-weight:700;color:var(--gold-dark);margin-bottom:4px}
+
+/* ── PRIVACY LOCK ── */
+.lock-overlay{position:fixed;inset:0;background:rgba(10,14,28,.85);z-index:999;display:none;align-items:center;justify-content:center}
+.lock-overlay.show{display:flex}
+.lock-box{background:#fff;border-radius:16px;padding:36px;width:360px;text-align:center}
+.lock-box i{font-size:48px;color:var(--gold);display:block;margin-bottom:16px}
+.lock-box h2{font-size:18px;font-weight:700;margin-bottom:8px}
+.lock-box p{font-size:13px;color:var(--text2);margin-bottom:20px}
+.pin-row{display:flex;justify-content:center;gap:10px;margin-bottom:20px}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:var(--border);transition:background .2s}
+.pin-dot.filled{background:var(--gold)}
+.pin-keys{display:grid;grid-template-columns:repeat(3,56px);gap:8px;justify-content:center}
+.pin-key{width:56px;height:44px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all .15s}
+.pin-key:hover{background:var(--gold-light);border-color:var(--gold)}
+
+/* ── MISC ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two-col.three{grid-template-columns:1fr 1fr 1fr}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.text-sm{font-size:12px;color:var(--text2)}
+.text-gold{color:var(--gold-dark);font-weight:600}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tag{display:inline-block;background:#F0EFE8;color:var(--text2);border-radius:20px;padding:2px 10px;font-size:11px;margin:2px}
+.progress-bar{height:8px;background:#F0EFE8;border-radius:4px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:4px;background:var(--gold)}
+
+/* ── NOTIFICATION PANEL ── */
+.notif-panel{position:absolute;top:52px;right:16px;width:320px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:200;display:none}
+.notif-panel.show{display:block}
+.notif-item{padding:12px 16px;border-bottom:1px solid #F0EFE8;cursor:pointer;transition:background .15s}
+.notif-item:hover{background:#FAFAF4}
+.notif-item:last-child{border:none}
+.notif-item .n-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.notif-item .n-sub{font-size:12px;color:var(--text3)}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;margin-right:6px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- LOCK OVERLAY -->
+<div class="lock-overlay show" id="lockOverlay">
+  <div class="lock-box">
+    <i class="ti ti-lock"></i>
+    <h2>Hallmark Centre Login</h2>
+    <p>Enter your 4-digit PIN to access the system</p>
+    <div class="pin-row" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-keys">
+      <button class="pin-key" onclick="pinPress(1)">1</button>
+      <button class="pin-key" onclick="pinPress(2)">2</button>
+      <button class="pin-key" onclick="pinPress(3)">3</button>
+      <button class="pin-key" onclick="pinPress(4)">4</button>
+      <button class="pin-key" onclick="pinPress(5)">5</button>
+      <button class="pin-key" onclick="pinPress(6)">6</button>
+      <button class="pin-key" onclick="pinPress(7)">7</button>
+      <button class="pin-key" onclick="pinPress(8)">8</button>
+      <button class="pin-key" onclick="pinPress(9)">9</button>
+      <button class="pin-key" onclick="pinClear()" style="font-size:11px">CLR</button>
+      <button class="pin-key" onclick="pinPress(0)">0</button>
+      <button class="pin-key" onclick="pinEnter()" style="font-size:11px;background:var(--gold);color:#fff">OK</button>
+    </div>
+    <p id="pinError" style="color:var(--red);font-size:12px;margin-top:10px;height:18px"></p>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="logo">
+    <div class="logo-icon">⚜</div>
+    <div>
+      <div style="font-size:14px;font-weight:700;letter-spacing:.5px">HUID Manager</div>
+      <div style="font-size:10px;color:#7AB;letter-spacing:.5px">Hallmarking Centre Suite</div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="lic-badge" onclick="goPage('reminders')" title="Licence Status">⚠ Licence: 42 days</div>
+    <div class="clock" id="clock">--:--:--</div>
+    <div style="position:relative">
+      <button class="btn btn-outline btn-sm" onclick="toggleNotif()" style="border-color:#345;color:#9AB;background:transparent">
+        <i class="ti ti-bell"></i> <span id="notifCount" style="background:var(--red);color:#fff;border-radius:10px;padding:0 5px;font-size:10px">3</span>
+      </button>
+      <div class="notif-panel" id="notifPanel">
+        <div style="padding:10px 16px;font-size:12px;font-weight:700;color:var(--text3);border-bottom:1px solid var(--border)">NOTIFICATIONS</div>
+        <div class="notif-item"><div class="n-title"><span class="notif-dot"></span>Calibration Due – XRF Machine</div><div class="n-sub">Due in 3 days · ID: XRF-002</div></div>
+        <div class="notif-item"><div class="n-title"><span class="notif-dot"></span>Licence Expiry Alert</div><div class="n-sub">BIS Licence expires in 42 days</div></div>
+        <div class="notif-item"><div class="n-title"><span class="notif-dot"></span>14 Articles Pending HUID</div><div class="n-sub">Batch #2024-B078 awaiting tagging</div></div>
+      </div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="lockSystem()" style="border-color:#345;color:#9AB;background:transparent"><i class="ti ti-lock"></i></button>
+  </div>
+</div>
+
+<!-- DESK NAV -->
+<div id="desknav">
+  <div class="desk-tab active" id="dt-reception" onclick="switchDesk('reception')"><i class="ti ti-door-enter"></i> Reception</div>
+  <div class="desk-sep"></div>
+  <div class="desk-tab" id="dt-quality" onclick="switchDesk('quality')"><i class="ti ti-microscope"></i> Quality / XRF</div>
+  <div class="desk-sep"></div>
+  <div class="desk-tab" id="dt-huid" onclick="switchDesk('huid')"><i class="ti ti-qrcode"></i> HUID Desk</div>
+  <div class="desk-sep"></div>
+  <div class="desk-tab" id="dt-admin" onclick="switchDesk('admin')"><i class="ti ti-settings"></i> Admin</div>
+  <div class="desk-sep"></div>
+  <div style="margin-left:auto;display:flex;gap:8px;align-items:center;padding:0 8px">
+    <a href="https://www.bis.gov.in/" target="_blank" style="text-decoration:none">
+      <button class="btn btn-outline btn-sm" style="border-color:#567;color:#9AB;background:transparent;font-size:11px"><i class="ti ti-external-link"></i> Manak Portal</button>
+    </a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- SIDEBAR -->
+  <div id="sidebar" id="sidebarEl">
+    <div class="sb-section" id="sb-reception">
+      <div class="sb-label">Reception</div>
+      <div class="sb-item active" onclick="goPage('dashboard')"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+      <div class="sb-item" onclick="goPage('intake')"><i class="ti ti-circle-plus"></i> Article Intake</div>
+      <div class="sb-item" onclick="goPage('articles')"><i class="ti ti-list-details"></i> Article Register <span class="sb-badge gold">248</span></div>
+      <div class="sb-item" onclick="goPage('delivery')"><i class="ti ti-package-export"></i> Delivery / Return</div>
+      <div class="sb-item" onclick="goPage('discount')"><i class="ti ti-percent"></i> Discount & Billing</div>
+    </div>
+    <div class="sb-section" id="sb-quality" style="display:none">
+      <div class="sb-label">Quality / XRF</div>
+      <div class="sb-item active" onclick="goPage('xrf')"><i class="ti ti-atom"></i> XRF Testing</div>
+      <div class="sb-item" onclick="goPage('weightcheck')"><i class="ti ti-scale"></i> Weight Automation</div>
+      <div class="sb-item" onclick="goPage('imageauto')"><i class="ti ti-camera"></i> Image Automation</div>
+      <div class="sb-item" onclick="goPage('qcreport')"><i class="ti ti-file-check"></i> QC Report</div>
+    </div>
+    <div class="sb-section" id="sb-huid" style="display:none">
+      <div class="sb-label">HUID Desk</div>
+      <div class="sb-item active" onclick="goPage('huidentry')"><i class="ti ti-barcode"></i> HUID Entry <span class="sb-badge">14</span></div>
+      <div class="sb-item" onclick="goPage('huidregister')"><i class="ti ti-database"></i> HUID Register</div>
+      <div class="sb-item" onclick="goPage('portal-links')"><i class="ti ti-external-link"></i> Portal Access</div>
+    </div>
+    <div class="sb-section" id="sb-admin" style="display:none">
+      <div class="sb-label">Admin</div>
+      <div class="sb-item active" onclick="goPage('dailyreport')"><i class="ti ti-report"></i> Daily Report</div>
+      <div class="sb-item" onclick="goPage('reminders')"><i class="ti ti-bell"></i> Reminders <span class="sb-badge">3</span></div>
+      <div class="sb-item" onclick="goPage('services')"><i class="ti ti-briefcase"></i> Our Services</div>
+      <div class="sb-item" onclick="goPage('settings')"><i class="ti ti-adjustments"></i> Settings</div>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div id="content">
+
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <div class="page active" id="p-dashboard">
+      <div class="page-title"><i class="ti ti-layout-dashboard"></i> Centre Dashboard</div>
+      <div class="alert alert-warning"><i class="ti ti-clock"></i> <b>Calibration Due:</b> XRF Machine #002 — due in 3 days. <span style="margin-left:auto;cursor:pointer;text-decoration:underline" onclick="goPage('reminders')">Manage →</span></div>
+      <div class="stats-row">
+        <div class="stat-tile gold"><div class="lbl">Articles Today</div><div class="val">37</div><div class="sub">↑ 12 from yesterday</div></div>
+        <div class="stat-tile green"><div class="lbl">HUID Tagged</div><div class="val">29</div><div class="sub">78% completion</div></div>
+        <div class="stat-tile blue"><div class="lbl">Gold Received (g)</div><div class="val">1,248</div><div class="sub">Net weight today</div></div>
+        <div class="stat-tile red"><div class="lbl">Pending QC</div><div class="val">8</div><div class="sub">3 urgent</div></div>
+      </div>
+
+      <!-- Process Flow -->
+      <div class="section-title">Today's Process Flow</div>
+      <div class="flow">
+        <div class="flow-step done" onclick="goPage('intake')"><div class="num">1</div><div class="lbl">Intake</div><div class="text-sm">37 done</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step done" onclick="goPage('weightcheck')"><div class="num">2</div><div class="lbl">Weighing</div><div class="text-sm">37 done</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step done" onclick="goPage('imageauto')"><div class="num">3</div><div class="lbl">Imaging</div><div class="text-sm">37 done</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step active-step" onclick="goPage('xrf')"><div class="num">4</div><div class="lbl">XRF Test</div><div class="text-sm">29/37</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step pending" onclick="goPage('huidentry')"><div class="num">5</div><div class="lbl">HUID Tag</div><div class="text-sm">23/37</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step pending" onclick="goPage('delivery')"><div class="num">6</div><div class="lbl">Delivery</div><div class="text-sm">14/37</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent Articles</div><button class="btn btn-outline btn-sm" onclick="goPage('articles')">View All</button></div>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Article ID</th><th>Type</th><th>Weight</th><th>Status</th></tr>
+              <tr><td class="text-gold">ART-2024-248</td><td>Necklace</td><td>28.4g</td><td><span class="badge badge-green">Delivered</span></td></tr>
+              <tr><td class="text-gold">ART-2024-247</td><td>Ring Set</td><td>12.1g</td><td><span class="badge badge-amber">HUID</span></td></tr>
+              <tr><td class="text-gold">ART-2024-246</td><td>Bangle</td><td>45.8g</td><td><span class="badge badge-blue">XRF</span></td></tr>
+              <tr><td class="text-gold">ART-2024-245</td><td>Earrings</td><td>8.6g</td><td><span class="badge badge-amber">HUID</span></td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Daily Gold (grams)</div></div>
+          <div id="weekChart"></div>
+          <div class="section-title" style="margin-top:14px">Purity Breakdown</div>
+          <div class="bar-row"><div class="bar-label">916 / 22K</div><div class="bar-track"><div class="bar-fill" style="width:62%;background:var(--gold)"></div></div><div class="bar-val">62%</div></div>
+          <div class="bar-row"><div class="bar-label">750 / 18K</div><div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--blue)"></div></div><div class="bar-val">28%</div></div>
+          <div class="bar-row"><div class="bar-label">585 / 14K</div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--green)"></div></div><div class="bar-val">10%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ ARTICLE INTAKE ═══════════════ -->
+    <div class="page" id="p-intake">
+      <div class="page-title"><i class="ti ti-circle-plus"></i> Article Intake</div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">Customer & Article Details</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Customer Name *</label><input type="text" placeholder="Enter full name" id="cust-name"></div>
+          <div class="form-group"><label>Mobile Number *</label><input type="tel" placeholder="10-digit mobile" id="cust-mobile"></div>
+          <div class="form-group"><label>Customer ID / Aadhaar (last 4)</label><input type="text" placeholder="XXXX" maxlength="4"></div>
+          <div class="form-group"><label>Date of Receipt</label><input type="date" id="receipt-date"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="form-grid three">
+          <div class="form-group"><label>Article Type *</label>
+            <select><option>Select...</option><option>Ring</option><option>Necklace</option><option>Bangle</option><option>Earrings</option><option>Bracelet</option><option>Pendant</option><option>Chain</option><option>Anklet</option><option>Other</option></select>
+          </div>
+          <div class="form-group"><label>Metal *</label>
+            <select><option>Gold</option><option>Silver</option><option>Platinum</option></select>
+          </div>
+          <div class="form-group"><label>Declared Purity</label>
+            <select><option>916 (22K)</option><option>750 (18K)</option><option>585 (14K)</option><option>375 (9K)</option><option>999 (24K)</option></select>
+          </div>
+          <div class="form-group"><label>Gross Weight (g) *</label><input type="number" placeholder="0.000" step="0.001" id="gross-wt"></div>
+          <div class="form-group"><label>Net Weight (g)</label><input type="number" placeholder="0.000" step="0.001" id="net-wt"></div>
+          <div class="form-group"><label>Quantity</label><input type="number" value="1" min="1"></div>
+          <div class="form-group"><label>Lot / Batch Number</label><input type="text" placeholder="e.g. LOT-2024-078"></div>
+          <div class="form-group"><label>BHC Code</label><input type="text" placeholder="Hallmarking centre code"></div>
+          <div class="form-group"><label>Priority</label>
+            <select><option>Normal</option><option>Urgent</option><option>Express</option></select>
+          </div>
+          <div class="form-group full"><label>Special Instructions / Remarks</label><textarea placeholder="Stone settings, fragile items, customer notes..."></textarea></div>
+        </div>
+        <div class="divider"></div>
+        <div class="card-title" style="margin-bottom:10px">Article Photos</div>
+        <div class="img-zone" onclick="triggerImgUpload()">
+          <i class="ti ti-camera"></i>
+          <p>Click to capture or upload article images</p>
+          <p style="font-size:11px;color:var(--text3);margin-top:4px">Front / Side / Hallmark area</p>
+        </div>
+        <div class="img-preview-row" id="imgPreviews"></div>
+        <div class="btn-row">
+          <button class="btn btn-gold" onclick="saveArticle()"><i class="ti ti-check"></i> Save & Generate Receipt</button>
+          <button class="btn btn-outline"><i class="ti ti-printer"></i> Print Token</button>
+          <button class="btn btn-outline"><i class="ti ti-send"></i> SMS Customer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ ARTICLES REGISTER ═══════════════ -->
+    <div class="page" id="p-articles">
+      <div class="page-title"><i class="ti ti-list-details"></i> Article Register</div>
+      <div class="search-box"><i class="ti ti-search"></i><input type="text" placeholder="Search by Article ID, Customer, HUID, Batch..."></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="btn btn-sm" style="background:var(--gold-light);color:var(--gold-dark);border:1px solid var(--gold)">All (248)</button>
+        <button class="btn btn-outline btn-sm">Pending HUID (14)</button>
+        <button class="btn btn-outline btn-sm">In XRF (8)</button>
+        <button class="btn btn-outline btn-sm">Ready (22)</button>
+        <button class="btn btn-outline btn-sm">Delivered (204)</button>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>Article ID</th><th>Customer</th><th>Type</th><th>Purity</th><th>Weight(g)</th><th>HUID</th><th>Status</th><th>Date</th><th></th></tr>
+            <tr><td class="text-gold">ART-248</td><td>Ramesh Kumar</td><td>Necklace</td><td>916</td><td>28.4</td><td style="font-family:monospace;font-size:12px">HX7892345</td><td><span class="badge badge-green">Delivered</span></td><td class="text-sm">17 Jun</td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+            <tr><td class="text-gold">ART-247</td><td>Priya Sharma</td><td>Ring Set (3)</td><td>916</td><td>12.1</td><td><span class="badge badge-amber">Pending</span></td><td><span class="badge badge-amber">HUID Wait</span></td><td class="text-sm">17 Jun</td><td><button class="btn btn-blue btn-sm" onclick="goPage('huidentry')">Tag HUID</button></td></tr>
+            <tr><td class="text-gold">ART-246</td><td>Suresh Jain</td><td>Bangle</td><td>750</td><td>45.8</td><td>—</td><td><span class="badge badge-blue">In XRF</span></td><td class="text-sm">17 Jun</td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+            <tr><td class="text-gold">ART-245</td><td>Anita Verma</td><td>Earrings</td><td>916</td><td>8.6</td><td><span class="badge badge-amber">Pending</span></td><td><span class="badge badge-amber">HUID Wait</span></td><td class="text-sm">16 Jun</td><td><button class="btn btn-blue btn-sm" onclick="goPage('huidentry')">Tag HUID</button></td></tr>
+            <tr><td class="text-gold">ART-244</td><td>Manoj Gupta</td><td>Chain</td><td>916</td><td>22.3</td><td style="font-family:monospace;font-size:12px">HX7892100</td><td><span class="badge badge-green">Delivered</span></td><td class="text-sm">16 Jun</td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+          </table>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+        <button class="btn btn-outline btn-sm"><i class="ti ti-file-export"></i> Export CSV</button>
+        <button class="btn btn-outline btn-sm"><i class="ti ti-printer"></i> Print Register</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ WEIGHT AUTOMATION ═══════════════ -->
+    <div class="page" id="p-weightcheck">
+      <div class="page-title"><i class="ti ti-scale"></i> Weight Automation</div>
+      <div class="two-col">
+        <div>
+          <div class="weight-display">
+            <div class="w-val" id="weightVal">000.000</div>
+            <div class="w-unit">grams</div>
+            <div class="w-status" id="weightStatus">● Stable — Ready to capture</div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px">Scale Controls</div>
+            <div class="btn-row" style="margin-top:0">
+              <button class="btn btn-outline" onclick="tare()"><i class="ti ti-refresh"></i> Tare / Zero</button>
+              <button class="btn btn-gold" onclick="captureWeight()"><i class="ti ti-check"></i> Capture Weight</button>
+            </div>
+            <div class="divider"></div>
+            <div class="form-grid">
+              <div class="form-group"><label>Article ID</label><input type="text" placeholder="ART-2024-XXX" id="wt-artid"></div>
+              <div class="form-group"><label>Weighing Type</label>
+                <select><option>Gross Weight</option><option>Net Weight</option><option>Stone Weight</option></select>
+              </div>
+            </div>
+            <div class="btn-row"><button class="btn btn-green" onclick="saveWeight()"><i class="ti ti-device-floppy"></i> Save to Article</button></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Weight Log Today</div></div>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Time</th><th>Article</th><th>Gross</th><th>Net</th></tr>
+              <tr><td class="text-sm">14:32</td><td class="text-gold">ART-248</td><td>28.40g</td><td>27.80g</td></tr>
+              <tr><td class="text-sm">14:28</td><td class="text-gold">ART-247</td><td>12.10g</td><td>11.95g</td></tr>
+              <tr><td class="text-sm">14:15</td><td class="text-gold">ART-246</td><td>45.80g</td><td>45.20g</td></tr>
+              <tr><td class="text-sm">13:55</td><td class="text-gold">ART-245</td><td>8.60g</td><td>8.40g</td></tr>
+            </table>
+          </div>
+          <div class="divider"></div>
+          <div class="form-group"><label>Scale Device</label>
+            <select><option>Mettler Toledo ME204 (COM3)</option><option>Ohaus Pioneer (COM4)</option></select>
+          </div>
+          <div class="form-group" style="margin-top:10px"><label>Auto-capture on stable</label>
+            <select><option>Enabled (2s stable)</option><option>Manual only</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ IMAGE AUTOMATION ═══════════════ -->
+    <div class="page" id="p-imageauto">
+      <div class="page-title"><i class="ti ti-camera"></i> Image Automation</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">Camera Capture</div>
+          <div style="background:var(--navy);border-radius:var(--radius);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;margin-bottom:12px">
+            <i class="ti ti-camera" style="font-size:40px;color:#567"></i>
+            <p style="color:#567;font-size:13px">Camera feed — connect device</p>
+          </div>
+          <div class="btn-row" style="margin-top:0">
+            <button class="btn btn-gold"><i class="ti ti-camera"></i> Capture</button>
+            <button class="btn btn-outline"><i class="ti ti-upload"></i> Upload</button>
+            <button class="btn btn-outline"><i class="ti ti-rotate"></i> Rotate</button>
+          </div>
+          <div class="divider"></div>
+          <div class="form-group"><label>Link to Article</label><input type="text" placeholder="ART-2024-XXX"></div>
+          <div class="form-group" style="margin-top:10px"><label>View Type</label>
+            <select><option>Front View</option><option>Side View</option><option>Top View</option><option>Hallmark Close-up</option><option>Overall</option></select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Captured Images</div><button class="btn btn-outline btn-sm"><i class="ti ti-filter"></i> Filter</button></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:#F0EFE8;border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+              <i class="ti ti-ring" style="font-size:24px;color:var(--gold)"></i>
+              <div style="font-size:10px;color:var(--text3)">ART-248 · Front</div>
+            </div>
+            <div style="background:#F0EFE8;border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+              <i class="ti ti-necklace" style="font-size:24px;color:var(--gold)"></i>
+              <div style="font-size:10px;color:var(--text3)">ART-248 · Side</div>
+            </div>
+            <div style="background:#F0EFE8;border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+              <i class="ti ti-scan" style="font-size:24px;color:var(--gold)"></i>
+              <div style="font-size:10px;color:var(--text3)">ART-247 · Hallmark</div>
+            </div>
+            <div style="background:var(--gold-light);border:2px dashed var(--gold);border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer">
+              <i class="ti ti-plus" style="font-size:24px;color:var(--gold)"></i>
+              <div style="font-size:10px;color:var(--gold-dark)">Add Photo</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="alert alert-info"><i class="ti ti-info-circle"></i> Auto-naming enabled: images saved as ArticleID_ViewType_Date.jpg</div>
+          <div class="form-group"><label>Camera Source</label>
+            <select><option>USB Camera (Article View)</option><option>Barcode Scanner Cam</option><option>Mobile Upload QR</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ XRF TESTING ═══════════════ -->
+    <div class="page" id="p-xrf">
+      <div class="page-title"><i class="ti ti-atom"></i> XRF Testing</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">XRF Test Entry</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Article ID *</label><input type="text" placeholder="ART-2024-XXX" id="xrf-artid"></div>
+            <div class="form-group"><label>XRF Machine</label>
+              <select><option>XRF-001 (Olympus Vanta)</option><option>XRF-002 (Bruker S1)</option></select>
+            </div>
+            <div class="form-group"><label>Au (Gold) %</label><input type="number" placeholder="91.60" step="0.01" id="xrf-au"></div>
+            <div class="form-group"><label>Ag (Silver) %</label><input type="number" placeholder="0.00" step="0.01"></div>
+            <div class="form-group"><label>Cu (Copper) %</label><input type="number" placeholder="0.00" step="0.01"></div>
+            <div class="form-group"><label>Zn (Zinc) %</label><input type="number" placeholder="0.00" step="0.01"></div>
+          </div>
+          <div class="divider"></div>
+          <div class="form-grid">
+            <div class="form-group"><label>Test Result</label>
+              <select id="xrf-result"><option value="pass">PASS</option><option value="fail">FAIL</option><option value="retest">Retest</option></select>
+            </div>
+            <div class="form-group"><label>Certified Purity</label>
+              <select><option>916 (22K)</option><option>750 (18K)</option><option>585 (14K)</option><option>375 (9K)</option><option>999 (24K)</option></select>
+            </div>
+            <div class="form-group full"><label>Remarks</label><textarea placeholder="Test observations..."></textarea></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-gold" onclick="saveXRF()"><i class="ti ti-check"></i> Save XRF Result</button>
+            <button class="btn btn-outline"><i class="ti ti-file-export"></i> Import from Machine</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">XRF Queue</div><span class="badge badge-amber">8 pending</span></div>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Article</th><th>Declared</th><th>Result</th></tr>
+              <tr><td class="text-gold">ART-246</td><td>916</td><td><span class="badge badge-blue">In Test</span></td></tr>
+              <tr><td class="text-gold">ART-243</td><td>750</td><td><span class="badge badge-amber">Queued</span></td></tr>
+              <tr><td class="text-gold">ART-242</td><td>916</td><td><span class="badge badge-amber">Queued</span></td></tr>
+              <tr><td class="text-gold">ART-241</td><td>916</td><td><span class="badge badge-red">FAIL</span></td></tr>
+              <tr><td class="text-gold">ART-240</td><td>585</td><td><span class="badge badge-green">PASS</span></td></tr>
+            </table>
+          </div>
+          <div class="divider"></div>
+          <div class="alert alert-warning"><i class="ti ti-tool"></i> XRF-002 calibration due in <b>3 days</b>. <a href="#" onclick="goPage('reminders');return false" style="color:var(--amber)">Schedule →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ HUID ENTRY ═══════════════ -->
+    <div class="page" id="p-huidentry">
+      <div class="page-title"><i class="ti ti-barcode"></i> HUID Entry & Tagging</div>
+      <div class="alert alert-info"><i class="ti ti-info-circle"></i> <b>14 articles</b> are awaiting HUID assignment. Enter HUID numbers from the BIS Manak Portal below.</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">Assign HUID</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Article ID *</label><input type="text" placeholder="ART-2024-XXX" id="huid-artid"></div>
+            <div class="form-group"><label>HUID Number *</label><input type="text" placeholder="e.g. HX7892345" id="huid-num" style="font-family:monospace;letter-spacing:1px"></div>
+            <div class="form-group"><label>Hallmark Year</label><input type="text" placeholder="e.g. A (2024)"></div>
+            <div class="form-group"><label>Assay Office</label><input type="text" placeholder="BHC Code"></div>
+            <div class="form-group"><label>Certified Purity</label>
+              <select><option>916 (22K)</option><option>750 (18K)</option><option>585 (14K)</option><option>375 (9K)</option><option>999 (24K)</option></select>
+            </div>
+            <div class="form-group"><label>Marking Date</label><input type="date"></div>
+          </div>
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:10px;font-size:12px;color:var(--text3)">SCAN HUID BARCODE</div>
+          <div class="img-zone" style="padding:16px">
+            <i class="ti ti-scan"></i>
+            <p>Click to scan HUID barcode / QR</p>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-gold" onclick="saveHUID()"><i class="ti ti-check"></i> Assign HUID</button>
+            <button class="btn btn-outline"><i class="ti ti-printer"></i> Print Certificate</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Pending HUID</div><span class="badge badge-amber">14</span></div>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Article</th><th>Customer</th><th>Purity</th><th>Weight</th><th></th></tr>
+              <tr><td class="text-gold">ART-247</td><td>Priya S.</td><td>916</td><td>12.1g</td><td><button class="btn btn-gold btn-sm" onclick="fillHUID('ART-247')">Select</button></td></tr>
+              <tr><td class="text-gold">ART-245</td><td>Anita V.</td><td>916</td><td>8.6g</td><td><button class="btn btn-gold btn-sm" onclick="fillHUID('ART-245')">Select</button></td></tr>
+              <tr><td class="text-gold">ART-239</td><td>Kavita R.</td><td>750</td><td>33.2g</td><td><button class="btn btn-gold btn-sm" onclick="fillHUID('ART-239')">Select</button></td></tr>
+              <tr><td class="text-gold">ART-236</td><td>Deepak M.</td><td>916</td><td>19.8g</td><td><button class="btn btn-gold btn-sm" onclick="fillHUID('ART-236')">Select</button></td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ HUID REGISTER ═══════════════ -->
+    <div class="page" id="p-huidregister">
+      <div class="page-title"><i class="ti ti-database"></i> HUID Register</div>
+      <div class="search-box"><i class="ti ti-search"></i><input type="text" placeholder="Search by HUID, Article ID, Customer name..."></div>
+      <div class="card" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>HUID</th><th>Article ID</th><th>Customer</th><th>Type</th><th>Purity</th><th>Weight</th><th>Date</th><th>Certificate</th></tr>
+            <tr>
+              <td style="font-family:monospace;font-size:12px;color:var(--blue)">HX7892345</td>
+              <td class="text-gold">ART-248</td><td>Ramesh Kumar</td><td>Necklace</td>
+              <td><span class="badge badge-gold">916</span></td><td>28.4g</td><td class="text-sm">17 Jun 2024</td>
+              <td><button class="btn btn-outline btn-sm"><i class="ti ti-download"></i> PDF</button></td>
+            </tr>
+            <tr>
+              <td style="font-family:monospace;font-size:12px;color:var(--blue)">HX7892100</td>
+              <td class="text-gold">ART-244</td><td>Manoj Gupta</td><td>Chain</td>
+              <td><span class="badge badge-gold">916</span></td><td>22.3g</td><td class="text-sm">16 Jun 2024</td>
+              <td><button class="btn btn-outline btn-sm"><i class="ti ti-download"></i> PDF</button></td>
+            </tr>
+            <tr>
+              <td style="font-family:monospace;font-size:12px;color:var(--blue)">HX7891890</td>
+              <td class="text-gold">ART-241</td><td>Sunita Patel</td><td>Bangle Set</td>
+              <td><span class="badge badge-blue">750</span></td><td>68.5g</td><td class="text-sm">15 Jun 2024</td>
+              <td><button class="btn btn-outline btn-sm"><i class="ti ti-download"></i> PDF</button></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+        <button class="btn btn-outline btn-sm"><i class="ti ti-file-export"></i> Export All</button>
+        <button class="btn btn-blue btn-sm"><i class="ti ti-external-link"></i> Verify on BIS Portal</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PORTAL LINKS ═══════════════ -->
+    <div class="page" id="p-portal-links">
+      <div class="page-title"><i class="ti ti-external-link"></i> Manak Portal Access</div>
+      <div class="alert alert-info"><i class="ti ti-info-circle"></i> These links open the official BIS / Manak Portal in a new window with the relevant section pre-selected.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:8px">
+        <div class="portal-tile" onclick="openPortal('https://www.bis.gov.in/')">
+          <i class="ti ti-door-enter" style="color:var(--green)"></i>
+          <div class="p-name">Reception / Intake</div>
+          <div class="p-url">bis.gov.in →</div>
+        </div>
+        <div class="portal-tile" onclick="openPortal('https://www.bis.gov.in/')">
+          <i class="ti ti-microscope" style="color:var(--blue)"></i>
+          <div class="p-name">Quality / XRF</div>
+          <div class="p-url">bis.gov.in →</div>
+        </div>
+        <div class="portal-tile" onclick="openPortal('https://www.bis.gov.in/')">
+          <i class="ti ti-qrcode" style="color:var(--gold-dark)"></i>
+          <div class="p-name">HUID Desk</div>
+          <div class="p-url">bis.gov.in →</div>
+        </div>
+        <div class="portal-tile" onclick="openPortal('https://www.bis.gov.in/')">
+          <i class="ti ti-file-check" style="color:var(--purple)"></i>
+          <div class="p-name">Licence & Renewal</div>
+          <div class="p-url">bis.gov.in →</div>
+        </div>
+        <div class="portal-tile" onclick="openPortal('https://www.bis.gov.in/')">
+          <i class="ti ti-report" style="color:var(--red)"></i>
+          <div class="p-name">Daily Upload</div>
+          <div class="p-url">bis.gov.in →</div>
+        </div>
+        <div class="portal-tile" onclick="openPortal('https://www.bis.gov.in/')">
+          <i class="ti ti-database" style="color:var(--navy)"></i>
+          <div class="p-name">Article Status</div>
+          <div class="p-url">bis.gov.in →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ DELIVERY ═══════════════ -->
+    <div class="page" id="p-delivery">
+      <div class="page-title"><i class="ti ti-package-export"></i> Delivery & Return</div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Process Delivery</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Article ID / HUID *</label><input type="text" placeholder="Scan or enter"></div>
+          <div class="form-group"><label>Customer Mobile</label><input type="tel" placeholder="Verify customer"></div>
+        </div>
+        <div class="alert alert-success" style="margin-top:12px"><i class="ti ti-check"></i> <b>ART-248</b> — Necklace · Ramesh Kumar · HUID: HX7892345 · Ready for delivery</div>
+        <div class="form-grid" style="margin-top:12px">
+          <div class="form-group"><label>Delivery Type</label>
+            <select><option>Customer Pickup</option><option>Home Delivery</option><option>Courier</option></select>
+          </div>
+          <div class="form-group"><label>Received By (Customer Signature)</label><input type="text" placeholder="Name of person receiving"></div>
+          <div class="form-group"><label>ID Proof Type</label>
+            <select><option>Aadhaar</option><option>PAN Card</option><option>Passport</option><option>Driving Licence</option></select>
+          </div>
+          <div class="form-group"><label>ID Number (last 4)</label><input type="text" maxlength="4" placeholder="XXXX"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-green"><i class="ti ti-check"></i> Confirm Delivery</button>
+          <button class="btn btn-outline"><i class="ti ti-printer"></i> Print Delivery Note</button>
+          <button class="btn btn-outline"><i class="ti ti-send"></i> SMS Customer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ DISCOUNT & BILLING ═══════════════ -->
+    <div class="page" id="p-discount">
+      <div class="page-title"><i class="ti ti-percent"></i> Discount & Billing</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">Generate Bill</div>
+          <div class="form-group"><label>Article ID</label><input type="text" placeholder="ART-2024-XXX" id="bill-artid" oninput="calcBill()"></div>
+          <div class="divider"></div>
+          <div class="form-grid">
+            <div class="form-group"><label>Hallmarking Charges (₹)</label><input type="number" value="45" id="hm-charge" oninput="calcBill()"></div>
+            <div class="form-group"><label>Testing Charges (₹)</label><input type="number" value="50" id="test-charge" oninput="calcBill()"></div>
+            <div class="form-group"><label>Quantity</label><input type="number" value="1" id="bill-qty" oninput="calcBill()"></div>
+            <div class="form-group"><label>Discount (%)</label><input type="number" value="0" min="0" max="100" id="discount-pct" oninput="calcBill()"></div>
+          </div>
+          <div class="divider"></div>
+          <div class="receipt" id="billReceipt">
+            <div class="receipt-header">
+              <div class="receipt-logo">⚜ HallmarkPro Centre</div>
+              <div class="text-sm" style="color:var(--text3)">BIS Licensed · <span id="r-date"></span></div>
+            </div>
+            <div class="receipt-row"><span>Hallmarking Charges</span><span id="r-hm">₹45.00</span></div>
+            <div class="receipt-row"><span>Testing Charges</span><span id="r-test">₹50.00</span></div>
+            <div class="receipt-row"><span>Subtotal</span><span id="r-sub">₹95.00</span></div>
+            <div class="receipt-row"><span>Discount</span><span id="r-disc" style="color:var(--green)">-₹0.00</span></div>
+            <div class="receipt-row"><span>GST (18%)</span><span id="r-gst">₹17.10</span></div>
+            <div class="receipt-row"><span style="font-weight:700">Total</span><span id="r-total" style="color:var(--gold-dark)">₹112.10</span></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-gold"><i class="ti ti-printer"></i> Print Bill</button>
+            <button class="btn btn-outline"><i class="ti ti-brand-whatsapp"></i> Send WhatsApp</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Billing History</div></div>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Bill No.</th><th>Customer</th><th>Amount</th><th>Date</th></tr>
+              <tr><td class="text-gold">INV-1042</td><td>Ramesh K.</td><td>₹224.20</td><td class="text-sm">17 Jun</td></tr>
+              <tr><td class="text-gold">INV-1041</td><td>Manoj G.</td><td>₹112.10</td><td class="text-sm">17 Jun</td></tr>
+              <tr><td class="text-gold">INV-1040</td><td>Priya S.</td><td>₹185.00</td><td class="text-sm">16 Jun</td></tr>
+            </table>
+          </div>
+          <div class="divider"></div>
+          <div class="stat-tile gold" style="margin:0">
+            <div class="lbl">Today's Revenue</div>
+            <div class="val">₹4,820</div>
+            <div class="sub">43 transactions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ DAILY REPORT ═══════════════ -->
+    <div class="page" id="p-dailyreport">
+      <div class="page-title"><i class="ti ti-report"></i> Daily Report Management</div>
+      <div class="stats-row">
+        <div class="stat-tile gold"><div class="lbl">Articles Received</div><div class="val">37</div></div>
+        <div class="stat-tile green"><div class="lbl">HUID Tagged</div><div class="val">29</div></div>
+        <div class="stat-tile blue"><div class="lbl">Gold (grams)</div><div class="val">1,248</div></div>
+        <div class="stat-tile"><div class="lbl">Revenue</div><div class="val">₹4,820</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><div class="card-title">This Week — Gold Processed (g)</div></div>
+          <div class="bar-row"><div class="bar-label">Mon</div><div class="bar-track"><div class="bar-fill" style="width:72%;background:var(--gold)"></div></div><div class="bar-val">872g</div></div>
+          <div class="bar-row"><div class="bar-label">Tue</div><div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--gold)"></div></div><div class="bar-val">1024g</div></div>
+          <div class="bar-row"><div class="bar-label">Wed</div><div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--gold)"></div></div><div class="bar-val">820g</div></div>
+          <div class="bar-row"><div class="bar-label">Thu</div><div class="bar-track"><div class="bar-fill" style="width:91%;background:var(--gold)"></div></div><div class="bar-val">1098g</div></div>
+          <div class="bar-row"><div class="bar-label">Fri</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--gold)"></div></div><div class="bar-val">1248g</div></div>
+          <div class="divider"></div>
+          <div class="card-header" style="margin:0"><div class="card-title">Purity Distribution</div></div>
+          <div class="bar-row"><div class="bar-label">22K/916</div><div class="bar-track"><div class="bar-fill" style="width:62%;background:#C9960C"></div></div><div class="bar-val">62%</div></div>
+          <div class="bar-row"><div class="bar-label">18K/750</div><div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--blue)"></div></div><div class="bar-val">28%</div></div>
+          <div class="bar-row"><div class="bar-label">14K/585</div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--green)"></div></div><div class="bar-val">10%</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Upload to BIS Portal</div></div>
+          <div class="form-group"><label>Report Date</label><input type="date" id="reportDate"></div>
+          <div class="form-group" style="margin-top:10px"><label>Report Type</label>
+            <select><option>Daily Summary</option><option>Weekly Report</option><option>Monthly Statement</option></select>
+          </div>
+          <div class="alert alert-success" style="margin-top:12px"><i class="ti ti-check"></i> Yesterday's report uploaded successfully to BIS Portal at 23:58.</div>
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn btn-gold"><i class="ti ti-upload"></i> Upload Today's Report</button>
+          </div>
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:10px">Export</div>
+          <div class="btn-row" style="margin-top:0">
+            <button class="btn btn-outline btn-sm"><i class="ti ti-file-excel"></i> Excel</button>
+            <button class="btn btn-outline btn-sm"><i class="ti ti-file-pdf"></i> PDF</button>
+            <button class="btn btn-outline btn-sm"><i class="ti ti-printer"></i> Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ REMINDERS ═══════════════ -->
+    <div class="page" id="p-reminders">
+      <div class="page-title"><i class="ti ti-bell"></i> Reminders & Licence Alerts</div>
+      <div class="alert alert-danger"><i class="ti ti-alert-triangle"></i> <b>2 items require immediate attention</b></div>
+      <div class="two-col">
+        <div>
+          <div class="section-title">Licence Expiry</div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="card-title">BIS Hallmarking Licence</div>
+                <div class="text-sm" style="margin-top:4px">Licence No: BHC/2021/04872</div>
+              </div>
+              <span class="badge badge-red">42 days left</span>
+            </div>
+            <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:11%;background:var(--red)"></div></div>
+            <div class="text-sm" style="margin-top:6px">Expires: 29 Jul 2024</div>
+            <div class="btn-row">
+              <button class="btn btn-red btn-sm" onclick="openPortal('https://www.bis.gov.in/')"><i class="ti ti-external-link"></i> Renew on BIS Portal</button>
+              <button class="btn btn-outline btn-sm"><i class="ti ti-bell"></i> Set Reminder</button>
+            </div>
+          </div>
+          <div class="section-title">Calibration Schedule</div>
+          <div class="card">
+            <table style="width:100%">
+              <tr><th>Equipment</th><th>Last Cal.</th><th>Due</th><th>Status</th></tr>
+              <tr><td>XRF-001 (Olympus)</td><td class="text-sm">12 Jun</td><td class="text-sm">12 Sep</td><td><span class="badge badge-green">OK</span></td></tr>
+              <tr><td>XRF-002 (Bruker)</td><td class="text-sm">17 Mar</td><td class="text-sm">20 Jun</td><td><span class="badge badge-red">Due Soon</span></td></tr>
+              <tr><td>Balance-001 (Mettler)</td><td class="text-sm">01 Jun</td><td class="text-sm">01 Sep</td><td><span class="badge badge-green">OK</span></td></tr>
+              <tr><td>Balance-002 (Ohaus)</td><td class="text-sm">05 Jun</td><td class="text-sm">05 Sep</td><td><span class="badge badge-green">OK</span></td></tr>
+            </table>
+            <div class="btn-row"><button class="btn btn-gold btn-sm"><i class="ti ti-plus"></i> Add Calibration Event</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Upcoming Reminders</div>
+          <div class="card">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-dot red"></div>
+                <div class="tl-date">20 Jun 2024 · In 3 days</div>
+                <div class="tl-text"><b>XRF-002 Calibration Due</b> — Bruker S1 · Schedule with calibration lab</div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot red"></div>
+                <div class="tl-date">29 Jul 2024 · In 42 days</div>
+                <div class="tl-text"><b>BIS Licence Renewal</b> — BHC/2021/04872 · Renew on Manak Portal</div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-date">01 Sep 2024 · In 77 days</div>
+                <div class="tl-text"><b>Balance-001 Calibration</b> — Mettler Toledo ME204</div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-date">05 Sep 2024 · In 81 days</div>
+                <div class="tl-text"><b>Balance-002 Calibration</b> — Ohaus Pioneer</div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot green"></div>
+                <div class="tl-date">12 Sep 2024 · In 88 days</div>
+                <div class="tl-text"><b>XRF-001 Calibration</b> — Olympus Vanta · Well within schedule</div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:0">
+            <div class="card-title" style="margin-bottom:12px">Add Reminder</div>
+            <div class="form-group"><label>Reminder Title</label><input type="text" placeholder="e.g. Annual Audit"></div>
+            <div class="form-group" style="margin-top:8px"><label>Date</label><input type="date"></div>
+            <div class="form-group" style="margin-top:8px"><label>Alert Before</label>
+              <select><option>7 days</option><option>15 days</option><option>30 days</option><option>45 days</option><option>60 days</option></select>
+            </div>
+            <div class="btn-row"><button class="btn btn-gold btn-sm"><i class="ti ti-plus"></i> Add</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ OUR SERVICES ═══════════════ -->
+    <div class="page" id="p-services">
+      <div class="page-title"><i class="ti ti-briefcase"></i> Our Services</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+        <div class="card" style="border-left:4px solid var(--gold)">
+          <div style="font-size:24px;margin-bottom:8px">⚜</div>
+          <div class="card-title">BIS Hallmarking</div>
+          <div class="text-sm" style="margin-top:6px;line-height:1.6">Certified hallmarking for gold, silver and platinum jewellery. All purities. Fast turnaround.</div>
+          <div style="margin-top:10px"><span class="tag">Gold</span><span class="tag">Silver</span><span class="tag">Platinum</span></div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--blue)">
+          <div style="font-size:24px;margin-bottom:8px"><i class="ti ti-atom" style="color:var(--blue)"></i></div>
+          <div class="card-title">XRF Testing</div>
+          <div class="text-sm" style="margin-top:6px;line-height:1.6">Non-destructive X-ray fluorescence testing for precise metal purity analysis.</div>
+          <div style="margin-top:10px"><span class="tag">Non-destructive</span><span class="tag">Accurate</span></div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--purple)">
+          <div style="font-size:24px;margin-bottom:8px"><i class="ti ti-qrcode" style="color:var(--purple)"></i></div>
+          <div class="card-title">HUID Tagging</div>
+          <div class="text-sm" style="margin-top:6px;line-height:1.6">Unique HUID number assignment for every jewellery article as per BIS mandate.</div>
+          <div style="margin-top:10px"><span class="tag">BIS Compliant</span><span class="tag">Digital</span></div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--green)">
+          <div style="font-size:24px;margin-bottom:8px"><i class="ti ti-certificate" style="color:var(--green)"></i></div>
+          <div class="card-title">Certification</div>
+          <div class="text-sm" style="margin-top:6px;line-height:1.6">Official hallmark certificates for consumer and trade compliance requirements.</div>
+          <div style="margin-top:10px"><span class="tag">Official</span><span class="tag">Printable</span></div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--red)">
+          <div style="font-size:24px;margin-bottom:8px"><i class="ti ti-scale" style="color:var(--red)"></i></div>
+          <div class="card-title">Precision Weighing</div>
+          <div class="text-sm" style="margin-top:6px;line-height:1.6">Calibrated precision balances for gross and net weight measurement.</div>
+          <div style="margin-top:10px"><span class="tag">0.001g precision</span></div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--amber)">
+          <div style="font-size:24px;margin-bottom:8px"><i class="ti ti-device-analytics" style="color:var(--amber)"></i></div>
+          <div class="card-title">Batch Processing</div>
+          <div class="text-sm" style="margin-top:6px;line-height:1.6">High-volume batch hallmarking for jewellery manufacturers and exporters.</div>
+          <div style="margin-top:10px"><span class="tag">Bulk</span><span class="tag">Export</span></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="card-title" style="margin-bottom:12px">Service Charges</div>
+        <table>
+          <tr><th>Service</th><th>Per Article</th><th>Bulk (50+)</th><th>Express</th></tr>
+          <tr><td>Gold Hallmarking</td><td>₹45</td><td>₹38</td><td>₹75</td></tr>
+          <tr><td>Silver Hallmarking</td><td>₹35</td><td>₹28</td><td>₹60</td></tr>
+          <tr><td>XRF Testing (additional)</td><td>₹50</td><td>₹40</td><td>₹80</td></tr>
+          <tr><td>Certificate Copy</td><td>₹20</td><td>₹15</td><td>₹30</td></tr>
+        </table>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn btn-outline btn-sm"><i class="ti ti-edit"></i> Edit Charges</button>
+          <button class="btn btn-outline btn-sm"><i class="ti ti-printer"></i> Print Rate Card</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SETTINGS ═══════════════ -->
+    <div class="page" id="p-settings">
+      <div class="page-title"><i class="ti ti-adjustments"></i> Settings</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">Centre Profile</div>
+          <div class="form-group"><label>Centre Name</label><input type="text" value="HallmarkPro Centre, Delhi"></div>
+          <div class="form-group" style="margin-top:10px"><label>BHC Licence Number</label><input type="text" value="BHC/2021/04872"></div>
+          <div class="form-group" style="margin-top:10px"><label>BIS Registration ID</label><input type="text" placeholder="Your BIS portal login ID"></div>
+          <div class="form-group" style="margin-top:10px"><label>Centre Address</label><textarea>123, Jewellery Market, Karol Bagh, New Delhi - 110005</textarea></div>
+          <div class="form-group" style="margin-top:10px"><label>Contact Mobile</label><input type="tel" value="9876543210"></div>
+          <div class="btn-row"><button class="btn btn-gold"><i class="ti ti-device-floppy"></i> Save Profile</button></div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px">Privacy & Access Control</div>
+            <div class="form-group"><label>Screen Lock PIN</label><input type="password" placeholder="4-digit PIN" maxlength="4"></div>
+            <div class="form-group" style="margin-top:10px"><label>Auto-Lock After</label>
+              <select><option>5 minutes</option><option>10 minutes</option><option>15 minutes</option><option>30 minutes</option><option>Never</option></select>
+            </div>
+            <div class="form-group" style="margin-top:10px"><label>Data Export Password</label><input type="password" placeholder="For Excel/PDF exports"></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:10px">Staff Access Roles</div>
+            <table>
+              <tr><th>Role</th><th>Desks</th><th></th></tr>
+              <tr><td>Receptionist</td><td><span class="tag">Reception</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+              <tr><td>Technician</td><td><span class="tag">Quality</span><span class="tag">XRF</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+              <tr><td>HUID Operator</td><td><span class="tag">HUID</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+              <tr><td>Manager</td><td><span class="tag">All</span></td><td><button class="btn btn-outline btn-sm">Edit</button></td></tr>
+            </table>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <div class="card-title" style="margin-bottom:12px">Hardware Config</div>
+            <div class="form-group"><label>Weighing Scale Port</label><input type="text" value="COM3 — Mettler Toledo ME204"></div>
+            <div class="form-group" style="margin-top:10px"><label>XRF Machine Port</label><input type="text" value="COM5 — Olympus Vanta"></div>
+            <div class="form-group" style="margin-top:10px"><label>Camera Device</label><input type="text" value="USB Camera 0 (Article View)"></div>
+            <div class="btn-row"><button class="btn btn-outline btn-sm"><i class="ti ti-plug"></i> Test Connections</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script>
+// ── STATE ──
+let currentDesk = 'reception';
+let currentPage = 'dashboard';
+let pinBuffer = '';
+const CORRECT_PIN = '1234';
+
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const d = now.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('clock').textContent = d + ' · ' + t;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Set today's date defaults
+const today = new Date().toISOString().split('T')[0];
+['receipt-date','reportDate'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.value = today;
+});
+document.getElementById('r-date').textContent = new Date().toLocaleDateString('en-IN');
+
+// ── PIN SYSTEM ──
+function pinPress(n) {
+  if(pinBuffer.length >= 4) return;
+  pinBuffer += n;
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('filled', i<pinBuffer.length);
+}
+function pinClear() {
+  pinBuffer = '';
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('filled');
+  document.getElementById('pinError').textContent = '';
+}
+function pinEnter() {
+  if(pinBuffer === CORRECT_PIN) {
+    document.getElementById('lockOverlay').classList.remove('show');
+    pinBuffer = '';
+    for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('filled');
+  } else {
+    document.getElementById('pinError').textContent = 'Incorrect PIN. Try again.';
+    pinBuffer = '';
+    for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('filled');
+  }
+}
+function lockSystem() {
+  document.getElementById('lockOverlay').classList.add('show');
+  pinBuffer = '';
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('filled');
+  document.getElementById('pinError').textContent = '';
+}
+
+// ── DESK SWITCHING ──
+const deskPages = {
+  reception: ['dashboard','intake','articles','delivery','discount'],
+  quality: ['xrf','weightcheck','imageauto','qcreport'],
+  huid: ['huidentry','huidregister','portal-links'],
+  admin: ['dailyreport','reminders','services','settings']
+};
+const deskDefaultPage = {reception:'dashboard',quality:'xrf',huid:'huidentry',admin:'dailyreport'};
+
+function switchDesk(desk) {
+  currentDesk = desk;
+  ['reception','quality','huid','admin'].forEach(d => {
+    document.getElementById('dt-'+d)?.classList.toggle('active', d===desk);
+    const sb = document.getElementById('sb-'+d);
+    if(sb) sb.style.display = d===desk ? '' : 'none';
+  });
+  goPage(deskDefaultPage[desk]);
+}
+
+// ── PAGE NAVIGATION ──
+function goPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('p-'+pageId);
+  if(el) el.classList.add('active');
+  currentPage = pageId;
+  // Update sidebar active
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => {
+    if(i.getAttribute('onclick') && i.getAttribute('onclick').includes("'"+pageId+"'")) i.classList.add('active');
+  });
+}
+
+// ── NOTIFICATIONS ──
+function toggleNotif() {
+  document.getElementById('notifPanel').classList.toggle('show');
+}
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notifPanel');
+  if(panel && !panel.contains(e.target) && !e.target.closest('[onclick="toggleNotif()"]')) {
+    panel.classList.remove('show');
+  }
+});
+
+// ── PORTAL ──
+function openPortal(url) {
+  window.open(url, '_blank');
+}
+
+// ── WEIGHT SIMULATION ──
+let weightSimTimer;
+function simulateWeight() {
+  const vals = ['028.384','028.397','028.401','028.399','028.400'];
+  let i = 0;
+  document.getElementById('weightStatus').textContent = '○ Stabilising...';
+  document.getElementById('weightStatus').style.color = '#EF9F27';
+  weightSimTimer = setInterval(() => {
+    document.getElementById('weightVal').textContent = vals[i % vals.length];
+    i++;
+    if(i >= vals.length) {
+      clearInterval(weightSimTimer);
+      document.getElementById('weightVal').textContent = '028.400';
+      document.getElementById('weightStatus').textContent = '● Stable — Ready to capture';
+      document.getElementById('weightStatus').style.color = '#7BC';
+    }
+  }, 300);
+}
+function tare() {
+  document.getElementById('weightVal').textContent = '000.000';
+  document.getElementById('weightStatus').textContent = '● Tared — Place article';
+  setTimeout(() => simulateWeight(), 800);
+}
+function captureWeight() {
+  const v = document.getElementById('weightVal').textContent;
+  document.getElementById('wt-artid').value = document.getElementById('wt-artid').value || 'ART-2024-248';
+  alert('Weight captured: ' + v + 'g for ' + (document.getElementById('wt-artid').value || 'article'));
+}
+function saveWeight() { alert('Weight saved to article record successfully.'); }
+
+// ── XRF ──
+function saveXRF() {
+  const artId = document.getElementById('xrf-artid').value || 'ART-246';
+  const au = document.getElementById('xrf-au').value || '91.60';
+  const res = document.getElementById('xrf-result').value;
+  alert('XRF Result saved: ' + artId + ' · Au: ' + au + '% · Result: ' + res.toUpperCase());
+}
+
+// ── HUID ──
+function fillHUID(artId) { document.getElementById('huid-artid').value = artId; }
+function saveHUID() {
+  const artId = document.getElementById('huid-artid').value;
+  const huid = document.getElementById('huid-num').value;
+  if(!artId || !huid) { alert('Please enter Article ID and HUID number.'); return; }
+  alert('HUID ' + huid + ' assigned to ' + artId + ' successfully!');
+}
+
+// ── ARTICLE SAVE ──
+function saveArticle() {
+  const name = document.getElementById('cust-name')?.value;
+  if(!name) { alert('Please enter customer name.'); return; }
+  alert('Article saved! Token ID: ART-2024-249\nCustomer: ' + name + '\nSMS sent to customer.');
+}
+
+// ── BILLING ──
+function calcBill() {
+  const hm = parseFloat(document.getElementById('hm-charge')?.value) || 45;
+  const tc = parseFloat(document.getElementById('test-charge')?.value) || 50;
+  const qty = parseFloat(document.getElementById('bill-qty')?.value) || 1;
+  const disc = parseFloat(document.getElementById('discount-pct')?.value) || 0;
+  const sub = (hm + tc) * qty;
+  const discAmt = sub * disc / 100;
+  const taxable = sub - discAmt;
+  const gst = taxable * 0.18;
+  const total = taxable + gst;
+  document.getElementById('r-hm').textContent = '₹' + (hm * qty).toFixed(2);
+  document.getElementById('r-test').textContent = '₹' + (tc * qty).toFixed(2);
+  document.getElementById('r-sub').textContent = '₹' + sub.toFixed(2);
+  document.getElementById('r-disc').textContent = '-₹' + discAmt.toFixed(2);
+  document.getElementById('r-gst').textContent = '₹' + gst.toFixed(2);
+  document.getElementById('r-total').textContent = '₹' + total.toFixed(2);
+}
+
+// ── IMAGE UPLOAD ──
+function triggerImgUpload() {
+  const in2 = document.createElement('input');
+  in2.type = 'file'; in2.accept = 'image/*'; in2.multiple = true;
+  in2.onchange = function() {
+    const prev = document.getElementById('imgPreviews');
+    [...this.files].forEach(f => {
+      const img = document.createElement('img');
+      img.className = 'img-thumb';
+      img.src = URL.createObjectURL(f);
+      prev.appendChild(img);
+    });
+  };
+  in2.click();
+}
+
+// Init bill calc
+calcBill();
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@ import client from '../api/client';
 import ServiceForm from '../components/ServiceForm';
 import { toast } from '../components/Toast';
 
-export default function GoldExchange({ setPage, globalEdit, setGlobalEdit }) {
+export default function GoldExchange({ setPage }) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (data) => {
@@ -14,7 +14,7 @@ export default function GoldExchange({ setPage, globalEdit, setGlobalEdit }) {
         txn_type: 'Buy',
         status: 'Pending'
       });
-      
+      toast('Gold Exchange job saved successfully!', 'success');
     } catch (err) {
       console.error(err);
       toast('Error saving job: ' + (err.response?.data?.error || err.message), 'error');
@@ -26,7 +26,7 @@ export default function GoldExchange({ setPage, globalEdit, setGlobalEdit }) {
   return (
     <div className="page active" id="p-goldexchange">
       <div className="page-title"><i className="ti ti-exchange"></i> Gold Exchange</div>
-      <ServiceForm title="Gold Exchange" icon="ti-exchange" onSubmit={handleSubmit} loading={loading} endpoint="/services/exchange" globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />
+      <ServiceForm title="Gold Exchange" icon="ti-exchange" onSubmit={handleSubmit} loading={loading} endpoint="/services/exchange" />
     </div>
   );
 }

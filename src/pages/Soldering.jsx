@@ -3,7 +3,7 @@ import client from '../api/client';
 import ServiceForm from '../components/ServiceForm';
 import { toast } from '../components/Toast';
 
-export default function Soldering({ setPage, globalEdit, setGlobalEdit }) {
+export default function Soldering({ setPage }) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (data) => {
@@ -13,7 +13,7 @@ export default function Soldering({ setPage, globalEdit, setGlobalEdit }) {
         ...data,
         status: 'Pending'
       });
-      
+      toast('Soldering job saved successfully!', 'success');
     } catch (err) {
       console.error(err);
       toast('Error saving job: ' + (err.response?.data?.error || err.message), 'error');
@@ -25,7 +25,7 @@ export default function Soldering({ setPage, globalEdit, setGlobalEdit }) {
   return (
     <div className="page active" id="p-soldering">
       <div className="page-title"><i className="ti ti-flame"></i> Soldering</div>
-      <ServiceForm title="Soldering" icon="ti-flame" onSubmit={handleSubmit} loading={loading} endpoint="/services/soldering" globalEdit={globalEdit} setGlobalEdit={setGlobalEdit} />
+      <ServiceForm title="Soldering" icon="ti-flame" onSubmit={handleSubmit} loading={loading} endpoint="/services/soldering" />
     </div>
   );
 }

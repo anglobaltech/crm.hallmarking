@@ -274,13 +274,6 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px 16px;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-.stat-tile:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  border-color: rgba(0, 117, 182, 0.4);
 }
 .stat-tile .lbl {
   font-size: 12px;
@@ -396,19 +389,11 @@ textarea {
 
 /* ── TABLE ── */
 .tbl-wrap {
-  min-height: 240px;
-  max-height: 420px;
-  overflow-y: auto;
+  overflow-x: auto;
 }
 table {
   width: 100%;
   border-collapse: collapse;
-}
-thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 th {
   font-size: 11px;
@@ -763,12 +748,3 @@ tr:hover td { background: #FAFAF4; }
     background: #fff;
   }
 }
-
-.topbar-icon-btn {
-  transition: all 0.2s ease-in-out;
-}
-.topbar-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: var(--gold) !important;
-  transform: translateY(-2px);
-}.rotating { animation: spin 1s linear infinite; } @keyframes spin { 100% { transform: rotate(360deg); } }

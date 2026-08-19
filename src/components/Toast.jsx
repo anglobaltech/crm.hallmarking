@@ -8,78 +8,38 @@ export function toast(message, type = 'success') {
 }
 
 const icons = {
-  success: <CheckCircle2 size={18} style={{ color: '#10B981', flexShrink: 0 }} />,
-  error: <XCircle size={18} style={{ color: '#EF4444', flexShrink: 0 }} />,
-  warning: <AlertTriangle size={18} style={{ color: '#F59E0B', flexShrink: 0 }} />,
-  info: <Info size={18} style={{ color: '#3B82F6', flexShrink: 0 }} />,
+  success: <CheckCircle2 size={16} className="text-emerald-600 flex-shrink-0" />,
+  error: <XCircle size={16} className="text-red-600 flex-shrink-0" />,
+  warning: <AlertTriangle size={16} className="text-amber-600 flex-shrink-0" />,
+  info: <Info size={16} className="text-blue-600 flex-shrink-0" />,
 };
 
 const bgMap = {
-  success: { bg: '#ECFDF5', border: '#A7F3D0', text: '#065F46' },
-  error: { bg: '#FEF2F2', border: '#FECACA', text: '#991B1B' },
-  warning: { bg: '#FFFBEB', border: '#FDE68A', text: '#92400E' },
-  info: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1E40AF' },
+  success: 'bg-emerald-50 border-emerald-200 shadow-emerald-500/5',
+  error: 'bg-red-50 border-red-200 shadow-red-500/5',
+  warning: 'bg-amber-50 border-amber-200 shadow-amber-500/5',
+  info: 'bg-blue-50 border-blue-200 shadow-blue-500/5',
+};
+
+const textMap = {
+  success: 'text-emerald-800',
+  error: 'text-red-800',
+  warning: 'text-amber-800',
+  info: 'text-blue-800',
 };
 
 function ToastItem({ toast: t, onRemove }) {
-  const [visible, setVisible] = useState(false);
-
   useEffect(() => {
-    // trigger animation
-    setTimeout(() => setVisible(true), 10);
-    const timer = setTimeout(() => {
-      setVisible(false);
-      setTimeout(() => onRemove(t.id), 300); // Wait for fade out
-    }, 4000);
+    const timer = setTimeout(() => onRemove(t.id), 8000); // Increased to 8 seconds so user can read it
     return () => clearTimeout(timer);
   }, [t.id, onRemove]);
 
-  const style = bgMap[t.type] || bgMap.success;
-
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      padding: '12px 16px',
-      borderRadius: '8px',
-      backgroundColor: style.bg,
-      border: `1px solid ${style.border}`,
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-      minWidth: '280px',
-      maxWidth: '350px',
-      fontFamily: "'Inter', sans-serif",
-      transform: visible ? 'translateX(0) scale(1)' : 'translateX(100px) scale(0.9)',
-      opacity: visible ? 1 : 0,
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      pointerEvents: 'auto',
-    }}>
+    <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${bgMap[t.type]} shadow-lg min-w-[280px] max-w-sm animate-enter`}>
       {icons[t.type]}
-      <p style={{ margin: 0, fontSize: '14px', fontWeight: 500, flex: 1, color: style.text, lineHeight: 1.4 }}>
-        {t.message}
-      </p>
-      <button 
-        onClick={() => {
-          setVisible(false);
-          setTimeout(() => onRemove(t.id), 300);
-        }}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: style.text,
-          opacity: 0.6,
-          borderRadius: '4px',
-          transition: 'background 0.2s, opacity 0.2s'
-        }}
-        onMouseOver={e => { e.currentTarget.style.opacity = 1; e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.05)'; }}
-        onMouseOut={e => { e.currentTarget.style.opacity = 0.6; e.currentTarget.style.backgroundColor = 'transparent'; }}
-      >
-        <X size={16} />
+      <p className={`text-sm font-medium flex-1 ${textMap[t.type]}`}>{t.message}</p>
+      <button onClick={() => onRemove(t.id)} className="text-slate-400 hover:text-slate-600 transition-colors ml-1 p-0.5 rounded hover:bg-white/50">
+        <X size={14} />
       </button>
     </div>
   );
@@ -89,7 +49,7 @@ export default function ToastContainer() {
   const [toasts, setToasts] = useState([]);
 
   const add = useCallback((t) => {
-    setToasts(prev => [...prev.slice(-4), t]);
+    setToasts(prev => [...prev.slice(-3), t]);
   }, []);
 
   useEffect(() => {
@@ -102,16 +62,7 @@ export default function ToastContainer() {
   }, []);
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: '24px',
-      right: '24px',
-      zIndex: 999999,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-      pointerEvents: 'none', // let clicks pass through the container
-    }}>
+    <div className="fixed bottom-5 right-5 z-[100] flex flex-col gap-2.5">
       {toasts.map(t => (
         <ToastItem key={t.id} toast={t} onRemove={remove} />
       ))}

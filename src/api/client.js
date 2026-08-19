@@ -37,11 +37,4 @@ client.interceptors.response.use(
   }
 );
 
-export const getImageUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('http')) return path;
-  const baseUrl = API_URL.replace(/\/api$/, '');
-  return `${baseUrl}${path}`;
-};
-
 export default client;

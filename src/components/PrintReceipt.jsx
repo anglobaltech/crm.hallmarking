@@ -1,7 +1,6 @@
 import React from 'react';
-import { getImageUrl } from '../api/client';
 
-export default function PrintReceipt({ invoice, innerRef, userContext }) {
+export default function PrintReceipt({ invoice, innerRef }) {
   if (!invoice) return null;
 
   const formatDate = (dateStr) => {
@@ -13,10 +12,6 @@ export default function PrintReceipt({ invoice, innerRef, userContext }) {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amt || 0);
   };
 
-  const centreName = userContext?.tenant_name || 'Hallmarking Centre';
-  const centreLicence = userContext?.bis_licence || 'N/A';
-  const centreAddress = userContext?.tenant_address || 'Address not provided';
-
   return (
     <div ref={innerRef} className="print-receipt-container">
       <style>
@@ -26,10 +21,6 @@ export default function PrintReceipt({ invoice, innerRef, userContext }) {
           }
           
           @media print {
-            @page {
-              size: auto;
-              margin: 0mm;
-            }
             /* Hide all app shells */
             #sidebar, .desk-nav, header, nav, .top-bar, .toast-container {
               display: none !important;
@@ -59,38 +50,22 @@ export default function PrintReceipt({ invoice, innerRef, userContext }) {
               padding: 20px;
             }
             .receipt-header {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
+              text-align: center;
               margin-bottom: 24px;
               border-bottom: 2px dashed #ccc;
               padding-bottom: 16px;
             }
-            .receipt-header .logo-container {
-              flex: 1;
-              text-align: left;
-            }
-            .receipt-header .text-container {
-              flex: 2;
-              text-align: center;
-            }
-            .receipt-header .empty-container {
-              flex: 1;
-            }
             .receipt-header h1 {
-              margin: 0 0 10px 0;
+              margin: 0;
               font-size: 24px;
-              letter-spacing: 2px;
-            }
-            .receipt-header h2 {
-              margin: 0 0 5px 0;
-              font-size: 28px;
-              color: #333;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 1px;
             }
             .receipt-header p {
-              margin: 2px 0;
+              margin: 4px 0 0 0;
               font-size: 14px;
-              color: #555;
+              color: #444;
             }
             .receipt-details {
               display: flex;
@@ -108,19 +83,18 @@ export default function PrintReceipt({ invoice, innerRef, userContext }) {
               margin-bottom: 24px;
               font-size: 14px;
             }
-            .receipt-table th, .receipt-table td {
-              padding: 8px;
-              text-align: left;
-              border-bottom: 1px solid #eee;
-            }
             .receipt-table th {
-              background: #f9f9f9;
-              font-weight: bold;
-              border-bottom: 2px solid #ccc;
+              text-align: left;
+              padding: 8px 4px;
+              border-bottom: 2px solid #000;
+            }
+            .receipt-table td {
+              padding: 8px 4px;
+              border-bottom: 1px dashed #ccc;
             }
             .receipt-totals {
               width: 300px;
-              float: right;
+              margin-left: auto;
               font-size: 14px;
             }
             .receipt-totals-row {
@@ -142,29 +116,16 @@ export default function PrintReceipt({ invoice, innerRef, userContext }) {
               color: #666;
               border-top: 2px dashed #ccc;
               padding-top: 16px;
-              clear: both;
             }
           }
         `}
       </style>
 
       <div className="receipt-header">
-        <div className="logo-container">
-          {userContext?.logo_url && (
-            <img 
-              src={getImageUrl(userContext.logo_url)} 
-              alt="Centre Logo" 
-              style={{ maxWidth: '120px', maxHeight: '100px', objectFit: 'contain' }} 
-            />
-          )}
-        </div>
-        <div className="text-container">
-          <h1>TAX INVOICE</h1>
-          <h2>{centreName}</h2>
-          <p>{centreAddress}</p>
-          <p><strong>GSTIN: {userContext?.gst_number || 'N/A'}</strong></p>
-        </div>
-        <div className="empty-container"></div>
+        <h1>TAX INVOICE</h1>
+        <p>Your Company Name Here</p>
+        <p>123 Business Road, City, State, ZIP</p>
+        <p>GSTIN: 27AAAAA0000A1Z5</p>
       </div>
 
       <div className="receipt-details">
@@ -241,14 +202,6 @@ export default function PrintReceipt({ invoice, innerRef, userContext }) {
           <span>Grand Total:</span>
           <span>{formatMoney(invoice.grand_total || invoice.amount)}</span>
         </div>
-        <div className="receipt-totals-row" style={{ marginTop: '8px' }}>
-          <span>Amount Paid:</span>
-          <span>{formatMoney(invoice.payment_amount || 0)}</span>
-        </div>
-        <div className="receipt-totals-row" style={{ color: '#E11D48', fontWeight: 'bold' }}>
-          <span>Amount Pending:</span>
-          <span>{formatMoney(Math.max(0, (parseFloat(invoice.grand_total || invoice.amount) || 0) - (parseFloat(invoice.payment_amount) || 0)))}</span>
-        </div>
       </div>
 
       <div className="receipt-footer">
@@ -257,6 +210,8 @@ export default function PrintReceipt({ invoice, innerRef, userContext }) {
             <strong>Remarks: </strong> {invoice.description}
           </div>
         )}
+        <p>Thank you for your business!</p>
+        <p>This is a computer generated invoice.</p>
       </div>
     </div>
   );
